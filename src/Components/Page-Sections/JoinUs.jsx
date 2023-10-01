@@ -1,15 +1,40 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 import { PiPaperPlane } from 'react-icons/pi';
 import SlideInLeft from '../Animations/SlideInLeft';
 import SlideInRight from '../Animations/SlideInRight';
 import addUser from '../../assets/Images/Animations/addUser.gif';
 import GetStarted from '../Modals/getStarted';
+
 import { AnimatePresence } from 'framer-motion';
+import Reset from '../Modals/Reset';
+import SignIn from '../Modals/SignIn';
 
 export default function JoinUs() {
+  // Register modal reducer
+  const modalReducer = (state, action) => {
+    switch (action.type) {
+      case 'OPEN_SIGN_IN':
+        return { ...state, signInModal: true, signUpModal: false, resetModal: false };
+      case 'CLOSE_SIGN_IN':
+        return { ...state, signInModal: false };
+      case 'OPEN_SIGN_UP':
+        return { ...state, signUpModal: true, signInModal: false, resetModal: false };
+      case 'CLOSE_SIGN_UP':
+        return { ...state, signUpModal: false };
+      case 'OPEN_RESET':
+        return { ...state, resetModal: true, signInModal: false, signUpModal: false };
+      case 'CLOSE_RESET':
+        return { ...state, resetModal: false };
+      default:
+        return state;
+    }
+  };
 
-  
-  const [showModal, setShowModal] = useState(false);
+  const [modalState, dispatch] = useReducer(modalReducer, {
+    signInModal: false,
+    signUpModal: false,
+    resetModal: false,
+  });
 
   return (
     <div className="my-12 bg-other">
@@ -36,7 +61,7 @@ export default function JoinUs() {
                 className="mr-2 rounded-lg bg-primary px-4 py-2 font-medium text-white duration-300 hover:scale-105 hover:cursor-pointer hover:bg-secondary focus:outline-none focus:ring-4 lg:px-5 lg:py-2.5 "
                 onClick={(e) => {
                   e.preventDefault();
-                  setShowModal(true);
+                  dispatch({ type: 'OPEN_SIGN_UP' });
                 }}
               >
                 Get Started <PiPaperPlane className="ml-2 inline-block rotate-90 hover:scale-105 " />
@@ -51,7 +76,35 @@ export default function JoinUs() {
         </SlideInRight>
       </div>
 
-      <AnimatePresence>{showModal && <GetStarted onClose={() => setShowModal(false)} />}</AnimatePresence>
+      <AnimatePresence>
+        {modalState.signUpModal && (
+          <GetStarted
+            onClose={() => dispatch({ type: 'CLOSE_SIGN_UP' })}
+            openSignIn={() => dispatch({ type: 'OPEN_SIGN_IN' })}
+            openReset={() => dispatch({ type: 'OPEN_RESET' })}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {modalState.signInModal && (
+          <SignIn
+            onClose={() => dispatch({ type: 'CLOSE_SIGN_IN' })}
+            openSignUp={() => dispatch({ type: 'OPEN_SIGN_UP' })}
+            openReset={() => dispatch({ type: 'OPEN_RESET' })}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {modalState.resetModal && (
+          <Reset
+            onClose={() => dispatch({ type: 'CLOSE_RESET' })}
+            openSignUp={() => dispatch({ type: 'OPEN_SIGN_UP' })}
+            openSignIn={() => dispatch({ type: 'OPEN_SIGN_IN' })}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
