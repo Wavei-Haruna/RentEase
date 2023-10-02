@@ -1,26 +1,85 @@
 import { motion as m } from 'framer-motion';
-import React from 'react';
+import React, { useState } from 'react';
 import { AiOutlineCloseSquare } from 'react-icons/ai';
 
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { db } from '../../firebase';
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router';
+import { toast, ToastContainer } from 'react-toastify';
+
 export default function GetStarted({ onClose, openSignIn, openReset }) {
-  const getStartedReducer = (state, action) => {
-    switch (action.type) {
-      case 'openModal': {
-        return {
-          ...state,
-          isOpen: true,
-          content: action.content,
-        };
-      }
-      case 'closeModal': {
-        return {
-          ...state,
-          isOpen: false,
-          content: null,
-        };
-      }
-    }
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    password: '',
+    remember: false,
+  });
+
+  //
+  const navigate = useNavigate();
+  const { first_name, last_name, email, password, remember } = formData;
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    const inputValue = type === 'checkbox' ? checked : value;
+    setFormData({
+      ...formData,
+      [name]: inputValue,
+    });
   };
+  //
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Do something with formData, like sending it to the server
+
+    try {
+      const auth = getAuth();
+
+      const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredentials.user;
+      updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password;
+      formDataCopy.timeStamp = serverTimestamp();
+      console.log(formDataCopy);
+
+      // sending the the date to firebase using setDoc.
+      await setDoc(doc(db, 'users', user.uid), formDataCopy);
+
+      // console.log(navigate('/app-home'), 'above is the route to the page');
+
+      toast.success('Sign up successful');
+    } catch (error) {
+      if (password.length > 6) toast.error('oops password must have at least 6 characters');
+      else toast.error('oops therfe is an error');
+    }
+    const completeFormData = { first_name, last_name, email, password, remember };
+    // console.log(completeFormData); // You can use completeFormData as needed
+  };
+  //
+  // const getStartedReducer = (state, action) => {
+  //   switch (action.type) {
+  //     case 'openModal': {
+  //       return {
+  //         ...state,
+  //         isOpen: true,
+  //         content: action.content,
+  //       };
+  //     }
+  //     case 'closeModal': {
+  //       return {
+  //         ...state,
+  //         isOpen: false,
+  //         content: null,
+  //       };
+  //     }
+  //   }
+  // };
   return (
     <m.div
       initial={{ opacity: 0 }}
@@ -36,7 +95,14 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
           onClick={onClose}
         />
 
-        <form className="mt-8 space-y-6" action="#">
+        <form
+          className="mt-8 space-y-6"
+          action="#"
+          onSubmit={(e) => {
+            handleSubmit(e);
+            // onClose;
+          }}
+        >
           {/* first name */}
 
           <div>
@@ -49,6 +115,8 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
               id="first_name"
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               placeholder="first name"
+              value={first_name}
+              onChange={handleInputChange}
               required
             />
           </div>
@@ -63,6 +131,8 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
               id="last_name"
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               placeholder="first name"
+              value={last_name}
+              onChange={handleInputChange}
               required
             />
           </div>
@@ -77,6 +147,8 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
               id="email"
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               placeholder="example@gmail.com"
+              value={email}
+              onChange={handleInputChange}
               required
             />
           </div>
@@ -90,6 +162,8 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
               id="password"
               placeholder="••••••••"
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              value={password}
+              onChange={handleInputChange}
               required
             />
           </div>
@@ -101,6 +175,8 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
                 name="remember"
                 type="checkbox"
                 className="focus:ring-3 h-4 w-4 rounded border-gray-300 bg-gray-50 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                checked={remember}
+                onChange={handleInputChange}
                 required
               />
             </div>
@@ -134,3 +210,5 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
     </m.div>
   );
 }
+
+//
