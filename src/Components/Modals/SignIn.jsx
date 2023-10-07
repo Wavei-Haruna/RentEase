@@ -1,26 +1,46 @@
 import { motion as m } from 'framer-motion';
-import React from 'react';
+import React, { useState } from 'react';
 import { AiOutlineCloseSquare } from 'react-icons/ai';
 
+import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router';
+
 export default function SignIn({ onClose, openSignUp, openReset }) {
-  const getStartedReducer = (state, action) => {
-    switch (action.type) {
-      case 'openModal': {
-        return {
-          ...state,
-          isOpen: true,
-          content: action.content,
-        };
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    remember: false,
+  });
+
+  const Navigate = useNavigate();
+
+  const { email, password, remember } = formData;
+
+  const handleChange = (e) => {
+    const { value, name, checked, type } = e.target;
+    const inputValue = type == 'checkbox' ? checked : value;
+
+    // update the login value.
+    setFormData({
+      ...formData,
+      [name]: inputValue,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredentials = await signInWithEmailAndPassword(auth, email, password);
+      if (userCredentials.user) {
+        Navigate('app-home');
       }
-      case 'closeModal': {
-        return {
-          ...state,
-          isOpen: false,
-          content: null,
-        };
-      }
+    } catch (error) {
+      toast.error('oops something went wrong');
     }
   };
+
   return (
     <m.div
       initial={{ opacity: 0 }}
@@ -36,7 +56,14 @@ export default function SignIn({ onClose, openSignUp, openReset }) {
           onClick={onClose}
         />
 
-        <form className="mt-8 space-y-6" action="#">
+        <form
+          className="mt-8 space-y-6"
+          action="#"
+          onSubmit={(e) => {
+            handleSubmit(e);
+            onClose;
+          }}
+        >
           {/* Email */}
           <div>
             <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
@@ -46,6 +73,8 @@ export default function SignIn({ onClose, openSignUp, openReset }) {
               type="email"
               name="email"
               id="email"
+              value={email}
+              onChange={handleChange}
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               placeholder="example@gmail.com"
               required
@@ -60,6 +89,8 @@ export default function SignIn({ onClose, openSignUp, openReset }) {
               name="password"
               id="password"
               placeholder="••••••••"
+              value={password}
+              onChange={handleChange}
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               required
             />
@@ -72,6 +103,8 @@ export default function SignIn({ onClose, openSignUp, openReset }) {
                 name="remember"
                 type="checkbox"
                 className="focus:ring-3 h-4 w-4 rounded border-gray-300 bg-gray-50 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                value={remember}
+                onChange={handleChange}
                 required
               />
             </div>

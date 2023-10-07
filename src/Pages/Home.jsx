@@ -2,12 +2,11 @@ import React from 'react';
 import Header from '../Components/Header';
 import { ActiveRouteProvider } from '../Components/Helpers/Context';
 import Hero from '../Components/Page-Sections/Hero';
-import HowItWorks from '../Components/Page_Sections/HowItWorks';
-import WhyUs from '../Components/Page-Sections/whyUs';
+import WhyUs from '../Components/Page-Sections/WhyUs';
 import JoinUs from '../Components/Page-Sections/JoinUs';
 import ContactUs from '../Components/Page-Sections/contactUs';
-import GetStarted from '../Components/Modals/getStarted';
 import Footer from '../Components/Page-Sections/Footer';
+import HowItWorks from '../Components/Page-Sections/HowItWorks';
 
 export default function Home() {
   return (
