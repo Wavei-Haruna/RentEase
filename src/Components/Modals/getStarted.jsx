@@ -50,36 +50,16 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
 
       // sending the the date to firebase using setDoc.
       await setDoc(doc(db, 'users', user.uid), formDataCopy);
-
-      // console.log(navigate('/app-home'), 'above is the route to the page');
+      navigate('app-home');
 
       toast.success('Sign up successful');
     } catch (error) {
       if (password.length > 6) toast.error('oops password must have at least 6 characters');
       else toast.error('oops therfe is an error');
     }
-    const completeFormData = { first_name, last_name, email, password, remember };
-    // console.log(completeFormData); // You can use completeFormData as needed
   };
-  //
-  // const getStartedReducer = (state, action) => {
-  //   switch (action.type) {
-  //     case 'openModal': {
-  //       return {
-  //         ...state,
-  //         isOpen: true,
-  //         content: action.content,
-  //       };
-  //     }
-  //     case 'closeModal': {
-  //       return {
-  //         ...state,
-  //         isOpen: false,
-  //         content: null,
-  //       };
-  //     }
-  //   }
-  // };
+  
+
   return (
     <m.div
       initial={{ opacity: 0 }}
@@ -88,7 +68,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
       exit={{ opacity: 0 }}
       className="h-modal  fixed left-0 right-0 top-[10vh] z-50 mx-4 flex w-screen items-center justify-center overflow-y-auto overflow-x-hidden bg-black  bg-opacity-70 md:inset-0 md:h-full"
     >
-      <div className="relative top-[19vh] z-10 w-fit rounded-lg bg-white p-4  shadow sm:p-5">
+      <div className="relative top-[19vh] z-10 w-fit rounded-lg bg-white p-4 shadow  sm:p-5 md:w-1/2">
         <AiOutlineCloseSquare
           size={32}
           className="absolute right-2 top-1 text-primary hover:scale-105 hover:text-other"
@@ -100,7 +80,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
           action="#"
           onSubmit={(e) => {
             handleSubmit(e);
-            // onClose;
+            onClose;
           }}
         >
           {/* first name */}

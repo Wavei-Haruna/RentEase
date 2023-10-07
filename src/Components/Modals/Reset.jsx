@@ -1,24 +1,33 @@
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import { motion as m } from 'framer-motion';
-import React from 'react';
+import React, { useState } from 'react';
 import { AiOutlineCloseSquare } from 'react-icons/ai';
+import { toast } from 'react-toastify';
 
 export default function Reset({ onClose, openSignUp, openSignIn }) {
-  const getStartedReducer = (state, action) => {
-    switch (action.type) {
-      case 'openModal': {
-        return {
-          ...state,
-          isOpen: true,
-          content: action.content,
-        };
-      }
-      case 'closeModal': {
-        return {
-          ...state,
-          isOpen: false,
-          content: null,
-        };
-      }
+  const [formData, setFormData] = useState({
+    email: '',
+    remember: false,
+  });
+
+  // lets handle the onchnage
+  const onChange = (e) => {
+    e.preventDefault();
+    const { name, type, checked, value } = e.target;
+    const inputType = type === 'checkbox' ? checked : value;
+    setFormData({
+      ...formData,
+      [name]: inputType,
+    });
+  };
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    const auth = getAuth();
+    try {
+      await sendPasswordResetEmail(auth, formData.email);
+      toast.success('reset link sent ');
+    } catch (error) {
+      toast.error('oops there is an error sending Link');
     }
   };
   return (
@@ -36,7 +45,7 @@ export default function Reset({ onClose, openSignUp, openSignIn }) {
           onClick={onClose}
         />
 
-        <form className="mt-8 space-y-6" action="#">
+        <form className="mt-8 space-y-6" action="#" onSubmit={handleFormSubmit}>
           {/* Email */}
           <div>
             <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
@@ -46,6 +55,8 @@ export default function Reset({ onClose, openSignUp, openSignIn }) {
               type="email"
               name="email"
               id="email"
+              value={formData.email}
+              onChange={onChange}
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               placeholder="example@gmail.com"
               required
@@ -59,6 +70,8 @@ export default function Reset({ onClose, openSignUp, openSignIn }) {
                 aria-describedby="remember"
                 name="remember"
                 type="checkbox"
+                value={formData.remember}
+                onChange={onChange}
                 className="focus:ring-3 h-4 w-4 rounded border-gray-300 bg-gray-50 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
                 required
               />
