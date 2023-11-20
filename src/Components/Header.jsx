@@ -32,7 +32,7 @@ export default function Header() {
                   setSignUpModal(true);
                 }}
               >
-                Get Started <PiPaperPlane className="ml-2 inline-block rotate-90 " />
+                Get Started<PiPaperPlane className="ml-2 inline-block rotate-90 " />
               </a>
               <HamburgerMenu showMenu={showMenu} setShowMenu={setShowMenu} />
             </div>

@@ -106,7 +106,6 @@ export default function SignIn({ onClose, openSignUp, openReset }) {
                 className="focus:ring-3 h-4 w-4 rounded border-gray-300 bg-gray-50 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
                 value={remember}
                 onChange={handleChange}
-                required
               />
             </div>
             <div className="mx-3 text-sm">

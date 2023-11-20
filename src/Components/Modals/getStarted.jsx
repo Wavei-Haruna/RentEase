@@ -40,7 +40,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
       const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredentials.user;
       updateProfile(auth.currentUser, {
-        displayName: name,
+        displayName: `${first_name} ${last_name}`,
       });
 
       const formDataCopy = { ...formData };
@@ -50,7 +50,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
 
       // sending the the date to firebase using setDoc.
       await setDoc(doc(db, 'users', user.uid), formDataCopy);
-      navigate('app-home');
+      navigate('/profile');
 
       toast.success('Sign up successful');
     } catch (error) {
@@ -58,7 +58,6 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
       else toast.error('oops therfe is an error');
     }
   };
-  
 
   return (
     <m.div

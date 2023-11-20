@@ -1,20 +1,26 @@
-import { getAuth, updateProfile, onAuthStateChanged, signOut, updateEmail } from 'firebase/auth';
+import { getAuth, updateProfile, onAuthStateChanged, signOut } from 'firebase/auth';
+import { doc, updateDoc } from 'firebase/firestore';
 import React, { useState, useEffect } from 'react';
-import { FaUser, FaEnvelope, FaEdit } from 'react-icons/fa'; // Importing icons from react-icons library
+import { FaEnvelope, FaEdit } from 'react-icons/fa'; //
+import { BiHome } from 'react-icons/bi'; //
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
-
+import { db } from '../firebase';
+import Spinner from './Spinner';
+import CreateListing from './CreateListing';
 export default function Profile() {
   const auth = getAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: auth?.currentUser?.displayName || 'Name',
-    email: auth?.currentUser?.email || 'Email',
+    first_name: '',
+    last_name: '',
+    userName: '',
+    email: '',
   });
-
   const [isEditing, setIsEditing] = useState(false);
 
-  const { name, email } = formData;
+  const { email, first_name, last_name, userName } = formData;
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -28,7 +34,7 @@ export default function Profile() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setFormData({
-          name: user?.displayName || 'Name',
+          userName: user?.displayName || 'Name',
           email: user?.email || 'Email',
         });
       }
@@ -41,17 +47,34 @@ export default function Profile() {
   // update the user Info.
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
+    setIsUpdating(true);
+    console.log(isUpdating);
     try {
-      await updateProfile(auth.currentUser, {
-        displayName: name,
+      if (auth.currentUser.displayName !== `${first_name} ${last_name}`) {
+        await updateProfile(auth.currentUser, {
+          displayName: `${first_name} ${last_name}`,
+        });
+        setFormData({
+          userName: auth?.currentUser.displayName,
+        });
+      }
+      // updating the name in fireStore
+      // now create the docRef and use it to update the doc.
+      const docRef = doc(db, 'users', auth.currentUser.uid);
+      // now lets update the doc.
+      await updateDoc(docRef, {
+        first_name: first_name,
+        last_name: last_name,
       });
-      await updateEmail(auth.currentUser, email);
+
       toast.success('Profile updated');
+
       setIsEditing(false);
+      setIsUpdating(false);
     } catch (error) {
       console.error('Error updating profile: ', error);
       toast.error('error updating profile');
+      console.log(first_name, last_name);
     }
   };
   //  Sign out functionality.
@@ -67,29 +90,44 @@ export default function Profile() {
     }
   };
   return (
-    <section className="h-screen w-screen bg-gray-100">
+    <section className="h-fit w-screen bg-gray-100">
       <h1 className="relative top-6 mx-auto mb-4 w-fit rounded-lg border-l-4 border-r-4 border-secondary px-2 font-header text-3xl font-bold text-gray-400">
-        My Profile
+        Profile
       </h1>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      {isUpdating && (
+        <div className="absolute top-0 z-10 m-0 flex h-screen w-screen flex-col items-center justify-center bg-black bg-opacity-70">
+          <Spinner />
+        </div>
+      )}
+      <div className="relative mt-10  grid w-full grid-cols-1 gap-4 md:grid-cols-2 ">
         <div className="rounded-lg p-6 font-menu text-gray-500 shadow-md">
           <h3 className="mb-2 text-xl font-semibold">Settings</h3>
           {isEditing ? (
             <form onSubmit={handleFormSubmit} className="mb-4">
               <div className="mb-4 flex items-center">
-                <FaUser className="mr-2 text-2xl text-blue-500" />
                 <input
                   type="text"
-                  name="name"
-                  value={name}
+                  name="first_name"
+                  value={first_name}
+                  placeholder={userName.split(' ')[0]}
                   onChange={handleInputChange}
                   className="border-b-2 border-blue-500 text-lg focus:outline-none"
                   required
                 />
               </div>
               <div className="mb-4 flex items-center">
-                <FaEnvelope className="mr-2 text-2xl text-blue-500" />
+                <input
+                  type="text"
+                  name="last_name"
+                  value={last_name}
+                  placeholder={userName.split(' ')[1]}
+                  onChange={handleInputChange}
+                  className="border-b-2 border-blue-500 text-lg focus:outline-none"
+                  required
+                />
+              </div>
+              <div className="mb-4 flex items-center">
                 <input
                   type="email"
                   name="email"
@@ -106,8 +144,7 @@ export default function Profile() {
           ) : (
             <>
               <div className="mb-4 flex items-center">
-                <FaUser className="mr-2 text-2xl text-blue-500" />
-                <p className="text-lg">{name}</p>
+                <p className="text-lg">{userName}</p>
               </div>
               <div className="mb-4 flex items-center">
                 <FaEnvelope className="mr-2 text-2xl text-blue-500" />
@@ -124,6 +161,9 @@ export default function Profile() {
               <p className="text-lg text-text"> Sign out</p>
             </button>
           </div>
+        </div>
+        <div className="mx-auto flex ">
+          <CreateListing />
         </div>
       </div>
     </section>
