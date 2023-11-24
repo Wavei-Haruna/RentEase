@@ -90,7 +90,7 @@ export default function Profile() {
     }
   };
   return (
-    <section className="h-fit w-screen bg-gray-100">
+    <section className="max-h-1/2 w-screen bg-gray-100">
       <h1 className="relative top-6 mx-auto mb-4 w-fit rounded-lg border-l-4 border-r-4 border-secondary px-2 font-header text-3xl font-bold text-gray-400">
         Profile
       </h1>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import MyDropzone from './Dropzone';
+import { MyDropzone, videoURL } from './Dropzone';
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 import { getStorage, ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
@@ -25,6 +25,7 @@ export default function CreateListing() {
     video: {},
     region: '',
     district: '',
+    price: 1,
     town: '',
     section: '',
     landMark: '',
@@ -38,7 +39,7 @@ export default function CreateListing() {
     Kitchen,
     hall,
     images,
-    video,
+    price,
     description,
     toilet,
     region,
@@ -129,23 +130,23 @@ export default function CreateListing() {
     const formDataCopy = {
       ...formData,
       imgUrls,
+      videoURL,
       timeStamp: serverTimestamp(),
       userRef: auth.currentUser.uid,
     };
     delete formDataCopy.images;
-    delete formDataCopy.video;
 
     const docRef = await addDoc(collection(db, 'listings'), formDataCopy);
     docRef && setLoading(false);
     toast.success('listings created');
   };
-  
+
   if (loading) {
     return <Spinner />;
   }
 
   return (
-    <main className="relative mx-auto my-3 max-w-md bg-green-100 p-2">
+    <main className="relative mx-auto my-3 max-w-md rounded-xl border-2  border-b-primary  border-t-primary bg-gray-200 p-2">
       <h1 className="m-2 p-2 text-center font-menu text-xl">Create Listing</h1>
 
       <form className="font-menu" onSubmit={onSubmit}>
@@ -177,7 +178,7 @@ export default function CreateListing() {
         </div>
 
         <div className="my-3 ">
-          <p>Name:</p>
+          <p> Title:</p>
 
           <input
             type="text"
@@ -185,8 +186,24 @@ export default function CreateListing() {
             value={name}
             onChange={onChange}
             id="name"
+            placeholder=" e.g two bed room apartment"
             required
-            className="w-full border-b border-secondary bg-white py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
+            className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
+          />
+        </div>
+
+        <div className="my-3 ">
+          <p> Price:</p>
+
+          <input
+            type="Number"
+            name="price"
+            value={price}
+            onChange={onChange}
+            id="price"
+            placeholder="1,000 in cedis"
+            required
+            className="w-full border-b border-secondary bg-white  px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
           />
         </div>
         <div className="space-between my-3 flex space-x-10 ">
@@ -201,7 +218,7 @@ export default function CreateListing() {
               id="bedroom"
               max={50}
               required
-              className="w-full border-b border-secondary bg-white py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
+              className="w-full border-b border-secondary bg-white  px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
             />
           </div>
           <div>
@@ -215,7 +232,7 @@ export default function CreateListing() {
               id="hall"
               max={50}
               required
-              className="w-full border-b border-secondary bg-white py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
+              className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
             />
           </div>
         </div>
@@ -229,7 +246,7 @@ export default function CreateListing() {
             onChange={onChange}
             id="description"
             required
-            className="w-full border-b border-secondary bg-white py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
+            className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
           />
         </div>
         <p>Bathroom</p>
@@ -319,7 +336,7 @@ export default function CreateListing() {
             id="region"
             placeholder="e.g Greater Accra"
             required
-            className="w-full border-b border-secondary bg-white py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
+            className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
           />
         </div>
         <div className="my-3 ">
@@ -333,7 +350,7 @@ export default function CreateListing() {
             onChange={onChange}
             placeholder="e.g Ashaiman"
             required
-            className="w-full border-b border-secondary bg-white py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
+            className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
           />
         </div>
         <div className="my-3 ">
@@ -347,7 +364,7 @@ export default function CreateListing() {
             id="town"
             placeholder="e.g Ashaiman"
             required
-            className="w-full border-b border-secondary bg-white py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
+            className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
           />
         </div>
         <div className="my-3 ">
@@ -361,7 +378,7 @@ export default function CreateListing() {
             id="section"
             placeholder="e.g Ashaiman Quaters"
             required
-            className="w-full border-b border-secondary bg-white py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
+            className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
           />
         </div>
         <div className="my-3 ">
@@ -375,7 +392,7 @@ export default function CreateListing() {
             id="landMark"
             placeholder="e.g opposite police Station"
             required
-            className="w-full border-b border-secondary bg-white py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
+            className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
           />
         </div>
         <div className="my-3">
