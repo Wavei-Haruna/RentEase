@@ -1,13 +1,16 @@
 import { getAuth, updateProfile, onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 import React, { useState, useEffect } from 'react';
-import { FaEnvelope, FaEdit } from 'react-icons/fa'; //
-import { BiHome } from 'react-icons/bi'; //
+import { FaUser, FaUserGear } from 'react-icons/fa6';
+
+import { FiMessageSquare } from 'react-icons/fi';
+import { FaUserEdit } from 'react-icons/fa'; //
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import { db } from '../firebase';
 import Spinner from './Spinner';
 import CreateListing from './CreateListing';
+import GetListings from './GetListings';
 export default function Profile() {
   const auth = getAuth();
   const navigate = useNavigate();
@@ -21,6 +24,7 @@ export default function Profile() {
 
   const { email, first_name, last_name, userName } = formData;
   const [isUpdating, setIsUpdating] = useState(false);
+  const [createListings, setCreateListings] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -90,7 +94,7 @@ export default function Profile() {
     }
   };
   return (
-    <section className="max-h-1/2 w-screen bg-gray-100">
+    <section className="w-full overflow-x-hidden bg-gray-100">
       <h1 className="relative top-6 mx-auto mb-4 w-fit rounded-lg border-l-4 border-r-4 border-secondary px-2 font-header text-3xl font-bold text-gray-400">
         Profile
       </h1>
@@ -100,12 +104,14 @@ export default function Profile() {
           <Spinner />
         </div>
       )}
-      <div className="relative mt-10  grid w-full grid-cols-1 gap-4 md:grid-cols-2 ">
-        <div className="rounded-lg p-6 font-menu text-gray-500 shadow-md">
-          <h3 className="mb-2 text-xl font-semibold">Settings</h3>
+      <div className=" mt-10  grid w-full grid-cols-1 gap-4 md:grid-cols-2 ">
+        <div className="h-fit rounded-lg p-6 font-menu text-gray-500 shadow-md">
+          <h3 className="spa mb-2 flex text-xl font-semibold">
+            <FaUserGear className="mr-2 w-8" /> Settings
+          </h3>
           {isEditing ? (
             <form onSubmit={handleFormSubmit} className="mb-4">
-              <div className="mb-4 flex items-center">
+              <div className="mb-4 flex items-center ">
                 <input
                   type="text"
                   name="first_name"
@@ -144,17 +150,18 @@ export default function Profile() {
           ) : (
             <>
               <div className="mb-4 flex items-center">
+                <FaUser className="mr-2 text-blue-500" />
                 <p className="text-lg">{userName}</p>
               </div>
               <div className="mb-4 flex items-center">
-                <FaEnvelope className="mr-2 text-2xl text-blue-500" />
+                <FiMessageSquare className="mr-2 text-2xl text-blue-500" />
                 <p className="text-lg">{email}</p>
               </div>
             </>
           )}
           <div className="flex space-x-10">
             <button className="my-2 flex items-center" onClick={() => setIsEditing(!isEditing)}>
-              <FaEdit className="mr-2 cursor-pointer text-2xl text-blue-500" />
+              <FaUserEdit className="mr-2 cursor-pointer text-2xl text-blue-500" />
               <p className="text-lg">Edit</p>
             </button>
             <button className="my-2 flex cursor-pointer items-center duration-200 ease-out" onClick={handleSignOut}>
@@ -162,10 +169,26 @@ export default function Profile() {
             </button>
           </div>
         </div>
-        <div className="mx-auto flex ">
-          <CreateListing />
+        <div className="w-full  ">
+          <div className="flex w-full justify-center">
+            <button
+              className="mx-2 cursor-pointer rounded-sm bg-blue-500 p-2 font-menu uppercase text-white transition-all ease-in-out hover:bg-secondary"
+              onClick={() => setCreateListings(!createListings)}
+            >
+              {createListings ? 'Close' : 'Create Listing'}
+            </button>
+          </div>
+          <div>
+            <h3 className="my-2 font-header font-semibold text-[#767676]">Total Listings created:</h3>
+            <h3 className="my-2 ml-6 font-header font-semibold text-[#767676]">For Sale:</h3>
+            <h3 className=" my-2 ml-6 font-header font-semibold text-[#767676]">Total Rent:</h3>
+            <h3 className=" my-2 ml-6 font-header font-semibold text-[#767676]">Sold Listings</h3>
+            <h3 className=" my-2 ml-6 font-header font-semibold text-[#767676]">Rented Listings:</h3>
+          </div>
+          {createListings && <CreateListing />}
         </div>
       </div>
+      <GetListings />
     </section>
   );
 }
