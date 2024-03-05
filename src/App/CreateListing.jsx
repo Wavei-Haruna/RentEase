@@ -9,7 +9,7 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../firebase';
 
-export default function CreateListing() {
+export default function CreateListing({formDataProp, onChangeProp, onSubmitProp}) {
   const auth = getAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
