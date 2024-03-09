@@ -7,7 +7,7 @@ import ListingItem from './ListingItem';
 import EditListing from './EditListing';
 import { toast } from 'react-toastify';
 
-export default function GetListings() {
+export default function GetListings({onListingsDataFetched}) {
   const auth = getAuth();
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,6 +49,22 @@ export default function GetListings() {
         });
         setListings(listingData);
         setLoading(false);
+        const filteredListings = listings.filter((listing) => listing.data.userRef === auth.currentUser.uid);
+
+      const totalListings = filteredListings.length;
+      const listingsForSale = filteredListings.filter((listing) => listing.data.type === "sell").length;
+      const listingsForRent = filteredListings.filter((listing) => listing.data.type === "rent").length;
+      // const soldListings = filteredListings.filter((listing) => listing.data.status === "sold").length;
+      // const rentedListings = filteredListings.filter((listing) => listing.data.status === "rented").length;
+
+        if(onListingsDataFetched){
+          onListingsDataFetched({
+            totalListings,
+          listingsForSale,
+          listingsForRent,
+          
+          })
+        }
       } catch (error) {
         
         setLoading(false);
@@ -56,13 +72,17 @@ export default function GetListings() {
     };
 
     fetchData();
-  }, [auth.currentUser.uid]);
+  }, [auth.currentUser.uid, onListingsDataFetched]);
 
   const onEdit = (listing) => {
     
     setSelectedListing(listing);
     setShowEditModal(true);
   };
+
+  // Lets get Listings
+
+ 
 
   if (loading && listings.length > 0) {
     return <Spinner />;

@@ -8,7 +8,7 @@ import { FaBath } from 'react-icons/fa';
 
 export default function ListingItem({ listing, onEdit, id, onDelete }) {
   console.log(listing);
-  const date = moment(listing.timeStamp.seconds * 1000);
+  const date = moment(listing?.timeStamp?.seconds * 1000);
   return (
     <div className='bg-white rounded-lg shadow-md p-6 space-y-4'>
       <div className='relative w-full h-64'>

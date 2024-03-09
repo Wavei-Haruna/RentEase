@@ -150,7 +150,7 @@ export default function CreateListing({formDataProp, onChangeProp, onSubmitProp}
       <div className="absolute  left-1/3 mx-auto my-3 max-w-md  rounded-xl border-2  border-b-primary  border-t-primary bg-gray-200 p-2">
         <h1 className="m-2 p-2 text-center font-menu text-xl">Create Listing</h1>
 
-        <form className="font-menu" onSubmit={onSubmit}>
+        <form className="font-menu -z-50" onSubmit={onSubmit}>
           <p className=" p-2 font-body font-semibold text-text underline">Sell or Rent</p>
 
           <div className="flex space-x-10 font-menu">

@@ -25,6 +25,7 @@ export default function Profile() {
   const { email, first_name, last_name, userName } = formData;
   const [isUpdating, setIsUpdating] = useState(false);
   const [createListings, setCreateListings] = useState(false);
+  const [fetchedListingsData, setFetchedListingsData] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -48,6 +49,10 @@ export default function Profile() {
     return () => unsubscribe();
   }, [auth]);
 
+  // 
+  const onListingsDataFetched = (data) => {
+    setFetchedListingsData(data);
+  };
   // update the user Info.
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -94,8 +99,8 @@ export default function Profile() {
     }
   };
   return (
-    <section className="w-full overflow-x-hidden bg-gray-100">
-      <h1 className="relative top-6 mx-auto mb-4 w-fit rounded-lg border-l-4 border-r-4 border-secondary px-2 font-header text-3xl font-bold text-gray-400">
+    <section className="w-full overflow-x-hidden bg-gray-200">
+      <h1 className="relative top-6 mx-auto my-2 w-fit rounded-lg border-l-4 border-r-4 border-secondary px-2 font-header text-3xl font-bold text-gray-600">
         Profile
       </h1>
 
@@ -104,8 +109,8 @@ export default function Profile() {
           <Spinner />
         </div>
       )}
-      <div className=" mt-10  grid w-full grid-cols-1 gap-4 md:grid-cols-2 ">
-        <div className="h-fit rounded-lg p-6 font-menu text-gray-500 shadow-md">
+      <div className=" mt-10 px-2  grid w-full grid-cols-1 gap-4 md:grid-cols-2 shadow-md my-3 ">
+        <div className="h-fit  p-6 font-menu text-gray-500 ">
           <h3 className="spa mb-2 flex text-xl font-semibold">
             <FaUserGear className="mr-2 w-8" /> Settings
           </h3>
@@ -150,22 +155,22 @@ export default function Profile() {
           ) : (
             <>
               <div className="mb-4 flex items-center">
-                <FaUser className="mr-2 text-blue-500" />
-                <p className="text-lg">{userName}</p>
+                <FaUser className="mr-2 text-gray-500" />
+                <p className="text-lg uppercase">{userName}</p>
               </div>
               <div className="mb-4 flex items-center">
-                <FiMessageSquare className="mr-2 text-2xl text-blue-500" />
+                <FiMessageSquare className="mr-2 text-2xl text-gray-500" />
                 <p className="text-lg">{email}</p>
               </div>
             </>
           )}
-          <div className="flex space-x-10">
-            <button className="my-2 flex items-center" onClick={() => setIsEditing(!isEditing)}>
-              <FaUserEdit className="mr-2 cursor-pointer text-2xl text-blue-500" />
-              <p className="text-lg">Edit</p>
+          <div className="flex  items-center justify-between w-3/4 p-1">
+            <button className="my-2 flex items-center justify-center hover:scale-105 rounded-sm bg-primary px-2 py-1 ml-8" onClick={() => setIsEditing(!isEditing)}>
+              <FaUserEdit className="mr-2 cursor-pointer text-xl text-white " />
+              <p className="text-white ">Edit</p>
             </button>
-            <button className="my-2 flex cursor-pointer items-center duration-200 ease-out" onClick={handleSignOut}>
-              <p className="text-lg text-text"> Sign out</p>
+            <button className="my-2 flex cursor-pointer rounded-sm py-1 hover:scale-105 items-center bg-[#8B0000] px-2 duration-200 ease-out" onClick={handleSignOut}>
+              <p className=" font-semibold text-white"> Sign out</p>
             </button>
           </div>
         </div>
@@ -179,16 +184,31 @@ export default function Profile() {
             </button>
           </div>
           <div>
-            <h3 className="my-2 font-header font-semibold text-[#767676]">Total Listings created:</h3>
-            <h3 className="my-2 ml-6 font-header font-semibold text-[#767676]">For Sale:</h3>
-            <h3 className=" my-2 ml-6 font-header font-semibold text-[#767676]">Total Rent:</h3>
-            <h3 className=" my-2 ml-6 font-header font-semibold text-[#767676]">Sold Listings</h3>
-            <h3 className=" my-2 ml-6 font-header font-semibold text-[#767676]">Rented Listings:</h3>
+            
+      {fetchedListingsData && (
+        <div>
+          <h3 className="my-2 font-header font-semibold text-[#767676]">
+            Total Listings created: {fetchedListingsData.totalListings}
+          </h3>
+          <h3 className="my-2 ml-6 font-header font-semibold text-[#767676]">
+            For Sale: {fetchedListingsData.listingsForSale}
+          </h3>
+          <h3 className=" my-2 ml-6 font-header font-semibold text-[#767676]">
+            Total Rent: {fetchedListingsData.listingsForRent}
+          </h3>
+          <h3 className=" my-2 ml-6 font-header font-semibold text-[#767676]">
+            {/* Sold Listings: {fetchedListingsData.soldListings} */}
+          </h3>
+          <h3 className=" my-2 ml-6 font-header font-semibold text-[#767676]">
+            {/* Rented Listings: {fetchedListingsData.rentedListings} */}
+          </h3>
+        </div> )}
           </div>
           {createListings && <CreateListing />}
         </div>
       </div>
-      <GetListings />
+      <GetListings onListingsDataFetched={onListingsDataFetched}/>
+
     </section>
   );
 }
