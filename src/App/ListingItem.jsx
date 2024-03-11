@@ -1,25 +1,37 @@
 import moment from 'moment';
-import React from 'react';
+import React, { useState } from 'react';
 import { MdKitchen, MdLocationOn } from 'react-icons/md';
 import { MdEdit, MdDelete } from 'react-icons/md';
 import { FaBed } from 'react-icons/fa';
 import { FaHome } from 'react-icons/fa';
 import { FaBath } from 'react-icons/fa';
 
-export default function ListingItem({ listing, onEdit, id, onDelete }) {
-  console.log(listing);
+
+export default function ListingItem({ listing, id, onDelete }) {
+
+  const [checked, setChecked] = useState(false);
+
+
+  const handleChange = () => {
+    setChecked((prevChecked) => !prevChecked);
+  };
+
+
+
   const date = moment(listing?.timeStamp?.seconds * 1000);
   return (
-    <div className='bg-white rounded-lg shadow-md p-6 space-y-4'>
+    <div className='bg-white  rounded-lg shadow-md p-6 space-y-4'>
       <div className='relative w-full h-64'>
         <img src={listing.imgUrls[0]} alt="" className='w-full h-full transition-all ease-in duration-150  object-cover rounded-lg hover:scale-105 cursor-pointer' />
         <div className='absolute bottom-4 right-4 z-10 flex space-x-4'>
           <button className='bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded' onClick={()=>onDelete(id)}>
             <MdDelete size={20} />
           </button>
-          <button className='bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded' onClick={() => onEdit(listing)}>
-          <MdEdit size={20} />
-</button>
+          <label className="inline-flex items-center cursor-pointer">
+  <input type="checkbox" value="" className="sr-only peer" checked={checked} onChange={handleChange}/>
+  <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-secondary"></div>
+  <span className="ms-3 text-sm font-medium font-menu text-white font-dark:text-gray-300">{listing.type=='rent'? "Rented":"Sold"}</span>
+</label>
         </div>
         <div className='absolute top-1 left-2  flex items-center justify-center bg-black p-2 bg-opacity-60 rounded-tl-md  rounded-br-md'>
           <MdLocationOn className='text-white mr-1' size={20} />

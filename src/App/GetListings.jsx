@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
-import { collection,  deleteDoc, doc, getDocs, orderBy, query, where } from 'firebase/firestore';
+import { collection,  deleteDoc, doc, getDocs, orderBy, query, where,  } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import Spinner from './Spinner';
 import ListingItem from './ListingItem';
@@ -31,6 +31,8 @@ export default function GetListings({onListingsDataFetched}) {
 
     }
   }
+  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -49,7 +51,8 @@ export default function GetListings({onListingsDataFetched}) {
         });
         setListings(listingData);
         setLoading(false);
-        const filteredListings = listings.filter((listing) => listing.data.userRef === auth.currentUser.uid);
+
+      const filteredListings = listings.filter((listing)=>  listing.data.userRef === auth.currentUser.uid )
 
       const totalListings = filteredListings.length;
       const listingsForSale = filteredListings.filter((listing) => listing.data.type === "sell").length;
@@ -92,7 +95,7 @@ export default function GetListings({onListingsDataFetched}) {
         <h2 className="text-center font-header font-semibold">My Listings</h2>
         <ul className='grid md:grid-cols-3 gap-5'>
           {listings?.map((listing) => (
-            <ListingItem key={listing.id} onEdit={onEdit} onDelete={onDelete} id={listing.id} listing={listing.data} />
+            <ListingItem key={listing.id} onEdit={onEdit} onStatusChange={onDelete} onDelete={onDelete} id={listing.id} listing={listing.data} />
           ))}
         </ul>
         {selectedListing && showEditModal && <EditListing listing={selectedListing} onClose={() => setShowEditModal(false)} />}

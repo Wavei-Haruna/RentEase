@@ -48,11 +48,11 @@ export default function Profile() {
     // Clean up the subscription to avoid memory leaks
     return () => unsubscribe();
   }, [auth]);
+  // The Data flows from the child comp to the parent,
+    const onListingsDataFetched = (data) =>{
+      setFetchedListingsData(data)
+    }
 
-  // 
-  const onListingsDataFetched = (data) => {
-    setFetchedListingsData(data);
-  };
   // update the user Info.
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -99,7 +99,7 @@ export default function Profile() {
     }
   };
   return (
-    <section className="w-full overflow-x-hidden bg-gray-200">
+    <section className="w-full relative overflow-x-hidden bg-gray-200 px-3">
       <h1 className="relative top-6 mx-auto my-2 w-fit rounded-lg border-l-4 border-r-4 border-secondary px-2 font-header text-3xl font-bold text-gray-600">
         Profile
       </h1>
@@ -109,7 +109,7 @@ export default function Profile() {
           <Spinner />
         </div>
       )}
-      <div className=" mt-10 px-2  grid w-full grid-cols-1 gap-4 md:grid-cols-2 shadow-md my-3 ">
+      <div className=" mt-10 px-2  grid max-w-6xl mx-auto grid-cols-1 gap-4 md:grid-cols-2 shadow-md my-3 ">
         <div className="h-fit  p-6 font-menu text-gray-500 ">
           <h3 className="spa mb-2 flex text-xl font-semibold">
             <FaUserGear className="mr-2 w-8" /> Settings
@@ -175,7 +175,7 @@ export default function Profile() {
           </div>
         </div>
         <div className="w-full  ">
-          <div className="flex w-full justify-center">
+          <div className="flex w-full justify-center z-50">
             <button
               className="mx-2 cursor-pointer rounded-sm bg-blue-500 p-2 font-menu uppercase text-white transition-all ease-in-out hover:bg-secondary"
               onClick={() => setCreateListings(!createListings)}
@@ -183,8 +183,8 @@ export default function Profile() {
               {createListings ? 'Close' : 'Create Listing'}
             </button>
           </div>
-          <div>
-            
+
+          <div >    
       {fetchedListingsData && (
         <div>
           <h3 className="my-2 font-header font-semibold text-[#767676]">
@@ -204,11 +204,12 @@ export default function Profile() {
           </h3>
         </div> )}
           </div>
-          {createListings && <CreateListing />}
+       
         </div>
       </div>
-      <GetListings onListingsDataFetched={onListingsDataFetched}/>
-
+     
+     <div className="max-w-6xl  mx-auto">   {createListings ? <CreateListing />:<GetListings onListingsDataFetched={onListingsDataFetched}/>
+}</div>
     </section>
   );
 }
