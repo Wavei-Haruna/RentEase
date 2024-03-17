@@ -92,7 +92,7 @@ export default function GetListings({onListingsDataFetched}) {
   } else
     return (
       <div>
-        <h2 className="text-center font-header font-semibold">My Listings</h2>
+        <h2 className="relative  mx-auto  w-fit rounded-lg border-l-4 border-r-4 border-primary px-2 font-header text-xl font-bold my-4 text-gray-600" >My Listings</h2>
         <ul className='grid md:grid-cols-3 gap-5'>
           {listings?.map((listing) => (
             <ListingItem key={listing.id} onEdit={onEdit} onStatusChange={onDelete} onDelete={onDelete} id={listing.id} listing={listing.data} />

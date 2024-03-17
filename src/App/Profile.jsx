@@ -1,16 +1,20 @@
 import { getAuth, updateProfile, onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { FaUser, FaUserGear } from 'react-icons/fa6';
 
 import { FiMessageSquare } from 'react-icons/fi';
-import { FaUserEdit } from 'react-icons/fa'; //
+import { FaBell, FaPlusCircle, FaUserEdit } from 'react-icons/fa'; //
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import { db } from '../firebase';
 import Spinner from './Spinner';
 import CreateListing from './CreateListing';
 import GetListings from './GetListings';
+import { MdMessage, MdReviews } from 'react-icons/md';
+import Notifications from './Hooks/Notifications';
+import Reviews from './Reviews';
+import Messages from './Messages';
 export default function Profile() {
   const auth = getAuth();
   const navigate = useNavigate();
@@ -98,23 +102,79 @@ export default function Profile() {
       console.log(error);
     }
   };
+  //  actions on dashboard
+  const actionTypes = {
+    showMe: "showMe",
+    showCreateListings: "showCreateListings",
+    showNotifications : "showNotifications",
+    showReviews: "showReviews",
+    showMessages: "showMessages",
+    
+  }
+  // Lets now work on the initial states
+  const initialState = {
+    showMe: true,
+    showCreateListings:false,
+    showNotifications: false,
+    showReviews: false,
+    showMessages: false,
+  }
+
+  const reducer= (state, action) => {
+    switch(action.type){
+      case actionTypes.showMe: return{
+        ...initialState, showMe:true,
+      }
+      case actionTypes.showCreateListings: return{
+        ...initialState, showCreateListings:true,showMe:false,
+      }
+      case actionTypes.showNotifications: return{
+        ...initialState, showNotifications:true,showMe:false,
+      }
+      case actionTypes.showReviews: return{
+        ...initialState, showReviews:true, showMe:false,
+      }
+      case actionTypes.showMessages: return {
+        ...initialState, showMessages:true, showMe:false,
+      
+      }
+      default: return state;
+    }
+  }
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const handleDashBoardItemClick = (actionType) =>
+  {
+    dispatch({type:actionType})
+  }
+
+
   return (
     <section className="w-full relative overflow-x-hidden bg-gray-200 px-3">
-      <h1 className="relative top-6 mx-auto my-2 w-fit rounded-lg border-l-4 border-r-4 border-secondary px-2 font-header text-3xl font-bold text-gray-600">
-        Profile
-      </h1>
-
+     
       {isUpdating && (
         <div className="absolute top-0 z-10 m-0 flex h-screen w-screen flex-col items-center justify-center bg-black bg-opacity-70">
           <Spinner />
         </div>
       )}
-      <div className=" mt-10 px-2  grid max-w-6xl mx-auto grid-cols-1 gap-4 md:grid-cols-2 shadow-md my-3 ">
-        <div className="h-fit  p-6 font-menu text-gray-500 ">
-          <h3 className="spa mb-2 flex text-xl font-semibold">
-            <FaUserGear className="mr-2 w-8" /> Settings
-          </h3>
-          {isEditing ? (
+
+     {/* Sub Menus */}
+     <div className='grid md:grid-cols-3  w-full h-[50vh]'>
+     <div className='bg-white py-2 px-3 font-menu text-gray-500 relative'>
+     <h1 className="relative  mx-auto my-2 w-fit rounded-lg border-l-4 border-r-4 border-secondary px-2 font-header text-xl font-bold text-gray-600">
+        Profile
+      </h1>
+     <button className='flex items-center font-menu font-semibold' onClick={ ()=> handleDashBoardItemClick(actionTypes.showMe)}> <FaUserGear className="mr-2 w-8 text-secondary"  /> Me</button>
+     <button className='flex  items-center transition-all ease-in-out duration-200  my-3 font-menu font-semibold' onClick={ ()=> handleDashBoardItemClick(actionTypes.showCreateListings)}> <FaPlusCircle className="mr-2 w-8 text-primary"  /> Create Listings</button>
+     <button className='flex  items-center transition-all ease-in-out duration-200  my-3 font-menu font-semibold' onClick={ ()=> handleDashBoardItemClick(actionTypes.showNotifications)}> <FaBell className="mr-2 w-8 text-primary"  /> Notifications</button>
+     <button className='flex  items-center transition-all ease-in-out duration-200  my-3 font-menu font-semibold' onClick={ ()=> handleDashBoardItemClick(actionTypes.showReviews)}> <MdReviews className="mr-2 w-8 text-other"  /> Reviews</button>
+     <button className='flex  items-center transition-all ease-in-out duration-200  my-3 font-menu font-semibold' onClick={ ()=> handleDashBoardItemClick(actionTypes.showMessages)}> <MdMessage className="mr-2 w-8 text-primary"  /> Messages</button>
+
+     </div>
+
+     <div className='bg-gray-300 md:col-span-2 h-[300px] p-2 overflow-hidden ' >
+     {state.showMe && <> {isEditing ? (
             <form onSubmit={handleFormSubmit} className="mb-4">
               <div className="mb-4 flex items-center ">
                 <input
@@ -164,7 +224,7 @@ export default function Profile() {
               </div>
             </>
           )}
-          <div className="flex  items-center justify-between w-3/4 p-1">
+          <div className="flex  items-center transition-all ease-in-out duration-200  justify-between w-3/4 p-1">
             <button className="my-2 flex items-center justify-center hover:scale-105 rounded-sm bg-primary px-2 py-1 ml-8" onClick={() => setIsEditing(!isEditing)}>
               <FaUserEdit className="mr-2 cursor-pointer text-xl text-white " />
               <p className="text-white ">Edit</p>
@@ -172,9 +232,10 @@ export default function Profile() {
             <button className="my-2 flex cursor-pointer rounded-sm py-1 hover:scale-105 items-center bg-[#8B0000] px-2 duration-200 ease-out" onClick={handleSignOut}>
               <p className=" font-semibold text-white"> Sign out</p>
             </button>
-          </div>
-        </div>
-        <div className="w-full  ">
+          </div></>}
+    
+          {/* Sow Create Listings */}
+      {state.showCreateListings &&   <div className="w-full transition-all ease-in-out duration-200 ">
           <div className="flex w-full justify-center z-50">
             <button
               className="mx-2 cursor-pointer rounded-sm bg-blue-500 p-2 font-menu uppercase text-white transition-all ease-in-out hover:bg-secondary"
@@ -183,8 +244,7 @@ export default function Profile() {
               {createListings ? 'Close' : 'Create Listing'}
             </button>
           </div>
-
-          <div >    
+          
       {fetchedListingsData && (
         <div>
           <h3 className="my-2 font-header font-semibold text-[#767676]">
@@ -203,12 +263,18 @@ export default function Profile() {
             {/* Rented Listings: {fetchedListingsData.rentedListings} */}
           </h3>
         </div> )}
-          </div>
-       
+  
         </div>
-      </div>
+}
+{/* Show Motifications */}
+
+{state.showNotifications && <Notifications />}
+{state.showReviews && <Reviews />}
+{state.showMessages && <Messages />}
+     </div>
      
-     <div className="max-w-6xl  mx-auto">   {createListings ? <CreateListing />:<GetListings onListingsDataFetched={onListingsDataFetched}/>
+     </div>
+     <div className="max-w-6xl  mx-auto relative top-[300px]  md:top-4 my-12">   {createListings ? <CreateListing />:<GetListings onListingsDataFetched={onListingsDataFetched}/>
 }</div>
     </section>
   );
