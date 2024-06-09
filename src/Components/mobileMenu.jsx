@@ -35,10 +35,10 @@ const navigate = useNavigate();
 
     initial={false}
     animate= {showMenu? 'open':'close'}
-    className={`${!showMenu && 'hidden'} absolute left-0 top-0 mt-[14vh] w-full items-center justify-center lg:hidden`}
+    className={`${!showMenu && 'hidden'} absolute bg-white left-0 top-0 mt-[14vh] w-full items-center justify-center lg:hidden`}
    >
 
-      <div className="absolute inset-0 -z-10 h-screen w-full bg-gray-500  opacity-80  lg:hidden">  </div>
+      <div className="absolute inset-0 -z-10 h-screen w-full bg-gray-500  lg:hidden">  </div>
          <m.ul
         variants={{
           open: {
@@ -75,7 +75,7 @@ const navigate = useNavigate();
               }}
               className={`${
                 isActive === item.id && 'bg-secondary text-white'
-              } m-2 block   rounded py-2 pl-3 pr-4 transition-all duration-200 ease-in-out hover:bg-secondary hover:text-white`}
+              } m-2 block   rounded py-2 pl-3 pr-4 transition-all duration-200 ease-in-out hover:bg-primary hover:text-white`}
             >
               {item.title}
             </Link></m.li>

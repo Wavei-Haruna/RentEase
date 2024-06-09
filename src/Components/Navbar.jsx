@@ -10,7 +10,7 @@ const NavBar = () => {
   const {isActive, setIsActive, navItems, showMenu, setShowMenu} = useContext(navContext)
   return (
     <>
-      <nav className=" top-0 hidden w-full items-center justify-between bg-white lg:order-1 lg:mt-0 lg:flex lg:w-auto font-menu">
+      <nav className=" top-0 hidden w-full items-center justify-between bg-white opacity-50 lg:order-1 lg:mt-0 lg:flex lg:w-auto font-menu">
         <ul className="mt-4 flex flex-col font-medium lg:mt-0 lg:flex-row lg:space-x-6">
           {navItems.map((item) => (
             <li key={item.id}>
@@ -28,7 +28,7 @@ const NavBar = () => {
                 }}
                 className={`${
                   isActive === item.id ? 'border-secondary text-primary' : 'border-transparent'
-                } block rounded border-b px-2 py-1 hover:border-secondary hover:text-primary`}
+                } block rounded border-b px-2 py-1 hover:border-secondary bg-white hover:text-primary`}
               >
                 {item.title}
               </Link>
