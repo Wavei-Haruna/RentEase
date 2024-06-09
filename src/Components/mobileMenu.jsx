@@ -1,12 +1,14 @@
 import { motion as m} from 'framer-motion'
 import React, { useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { navContext } from './Helpers/Context'
 
 
 
 
 export default function MobileMenu() {
+
+const navigate = useNavigate();
 
   const {isActive, setIsActive, navItems,showMenu,setShowMenu} = useContext(navContext)
 
@@ -63,6 +65,8 @@ export default function MobileMenu() {
               onClick={(e) => {
                 e.preventDefault();
                 setIsActive(item.id);
+                navigate(item.to);
+                console.log(item.to);
                 setShowMenu(false);
                 let page = document.getElementById(item.title);
                 const yOffset = -72;

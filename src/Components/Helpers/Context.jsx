@@ -6,7 +6,7 @@ import { navItems } from "../../utils";
 export const navContext = createContext();
 
 export function ActiveRouteProvider({children}){
-const {isActive, setIsActive} = useState(1)
+const [isActive, setIsActive] = useState(1)
 const [showMenu, setShowMenu] = useState(false);
 
 

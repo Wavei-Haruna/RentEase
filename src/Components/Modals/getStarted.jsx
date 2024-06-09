@@ -1,12 +1,12 @@
 import { motion as m } from 'framer-motion';
 import React, { useState } from 'react';
 import { AiOutlineCloseSquare } from 'react-icons/ai';
-
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { db } from '../../firebase';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router';
 import { toast, ToastContainer } from 'react-toastify';
+import GAuth from './gAuth';
 
 export default function GetStarted({ onClose, openSignIn, openReset }) {
   const [formData, setFormData] = useState({
@@ -172,12 +172,15 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
               Lost Password?
             </a>
           </div>
+          <div className='justify-center md:flex items-center'>
           <button
             type="submit"
             className="w-full rounded-lg bg-blue-700 px-5 py-3 text-center text-base font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 sm:w-auto"
           >
             Sign Up
           </button>
+            <GAuth/>
+          </div>
           <div className="text-sm font-medium text-gray-900 dark:text-white">
             Have an account?
             <a className="ml-3 cursor-pointer text-blue-600 hover:underline dark:text-blue-500" onClick={openSignIn}>

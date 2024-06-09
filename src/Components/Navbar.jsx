@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import MobileNav from './mobileMenu';
 import { useContext } from 'react';
 import { navContext } from './Helpers/Context';
 
 
 const NavBar = () => {
-
+  const navigate= useNavigate();
   const {isActive, setIsActive, navItems, showMenu, setShowMenu} = useContext(navContext)
   return (
     <>
@@ -18,6 +18,9 @@ const NavBar = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   setIsActive(item.id);
+                   navigate(item.to)
+
+
                   let page = document.getElementById(item.title);
                   const yOffset = -72;
                   const y = page?.getBoundingClientRect()?.top + window.scrollY + yOffset;
