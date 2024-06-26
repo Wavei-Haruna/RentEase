@@ -65,9 +65,9 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
       animate={{ opacity: 1 }}
       transition={{ duration: 1, ease: 'circIn' }}
       exit={{ opacity: 0 }}
-      className="h-modal  fixed left-0 right-0 top-[10vh] z-50 mx-4 flex w-screen items-center justify-center overflow-y-auto overflow-x-hidden bg-black  bg-opacity-70 md:inset-0 md:h-full"
+      className="h-modal  fixed left-0 right-0 top-[5vh] z-50 mx-4 flex w-screen items-center justify-center overflow-y-auto overflow-x-hidden bg-black  bg-opacity-70 md:inset-0 md:h-full"
     >
-      <div className="relative top-[19vh] z-10 w-fit rounded-lg bg-white p-4 shadow  sm:p-5 md:w-1/2">
+      <div className="relative  z-10 w-fit rounded-lg bg-white p-4 shadow  sm:p-5 md:w-1/2">
         <AiOutlineCloseSquare
           size={32}
           className="absolute right-2 top-1 text-primary hover:scale-105 hover:text-other"
@@ -75,7 +75,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
         />
 
         <form
-          className="mt-8 space-y-6"
+          className="mt-8 space-y-6 md:space-y-0  gap-10 grid md:grid-cols-2"
           action="#"
           onSubmit={(e) => {
             handleSubmit(e);
@@ -92,7 +92,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
               type="text"
               name="first_name"
               id="first_name"
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              className="block w-full rounded-sm focus:outline-none border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               placeholder="first name"
               value={first_name}
               onChange={handleInputChange}
@@ -108,7 +108,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
               type="text"
               name="last_name"
               id="last_name"
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              className="block w-full rounded-sm focus:outline-none border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               placeholder="first name"
               value={last_name}
               onChange={handleInputChange}
@@ -124,7 +124,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
               type="email"
               name="email"
               id="email"
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              className="block w-full rounded-sm focus:outline-none border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               placeholder="example@gmail.com"
               value={email}
               onChange={handleInputChange}
@@ -140,7 +140,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
               name="password"
               id="password"
               placeholder="••••••••"
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              className="block w-full rounded-sm focus:outline-none border border-gray-300 bg-gray-50 p-2.5  text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               value={password}
               onChange={handleInputChange}
               required
@@ -175,7 +175,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
           <div className='justify-center md:flex items-center'>
           <button
             type="submit"
-            className="w-full rounded-lg bg-blue-700 px-5 py-3 text-center text-base font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 sm:w-auto"
+            className="w-full rounded-sm  bg-primary py-2 text-center px-5 text-base font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-primary dark:focus:ring-blue-800 sm:w-auto"
           >
             Sign Up
           </button>
