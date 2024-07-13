@@ -28,7 +28,7 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [createListings, setCreateListings] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   
 const {first_name, last_name, userName, email} = formData;

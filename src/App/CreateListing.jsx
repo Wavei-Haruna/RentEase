@@ -111,9 +111,11 @@ export default function CreateListing() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
+          // Assuming you have a service to convert coordinates to URL
+          const locationUrl = `https://maps.google.com/?q=${latitude},${longitude}`;
           setFormData((prevState) => ({
             ...prevState,
-            location: `${latitude}, ${longitude}`,
+            location: locationUrl,
           }));
         },
         (error) => {
@@ -125,6 +127,7 @@ export default function CreateListing() {
       toast.error('Geolocation is not supported by this browser');
     }
   };
+  
 
   const onSubmit = async (e) => {
     e.preventDefault();

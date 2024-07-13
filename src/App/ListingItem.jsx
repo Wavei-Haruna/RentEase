@@ -5,9 +5,11 @@ import { MdEdit, MdDelete } from 'react-icons/md';
 import { FaBed } from 'react-icons/fa';
 import { FaHome } from 'react-icons/fa';
 import { FaBath } from 'react-icons/fa';
+import { useNavigate } from 'react-router';
 
 
 export default function ListingItem({ listing, id, onDelete }) {
+  const navigate = useNavigate();
 
   const [checked, setChecked] = useState(false);
 
@@ -20,9 +22,9 @@ export default function ListingItem({ listing, id, onDelete }) {
 
   const date = moment(listing?.timeStamp?.seconds * 1000);
   return (
-    <div className='bg-white  rounded-lg shadow-md p-6 space-y-4'>
+    <div className='bg-white  rounded-lg shadow-md p-6 space-y-4'  >
       <div className='relative w-full h-64'>
-        <img src={listing.imgUrls[0]} alt="" className='w-full h-full transition-all ease-in duration-150  object-cover rounded-lg hover:scale-105 cursor-pointer' />
+        <img src={listing.imgUrls[0]} alt="" className='w-full h-full transition-all ease-in duration-150  object-cover rounded-lg hover:scale-105 cursor-pointer' onClick={() => navigate(`/listing/${id}`)}/>
         <div className='absolute bottom-4 right-4 z-10 flex space-x-4'>
           <button className='bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded' onClick={()=>onDelete(id)}>
             <MdDelete size={20} />

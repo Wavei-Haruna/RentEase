@@ -5,20 +5,19 @@ import ForSale from '../App/ForSale';
 import PrivateRoute from '../App/PrivateRoute';
 import Profile from '../App/Profile';
 import Home from '../Pages/Home';
-
+import DetailedListing from '../App/DetailedListing'
 
 export const routes = [
   { path: '/', element: <Home /> },
- 
   {
     path: '/profile',
     element: <PrivateRoute />,
-    // don't forget to pass the children to it as it is necessary.
     children: [
       { path: '/profile', element: <Profile /> },
     ],
   },
-  {path: '/for-sale', element: <ForSale/>},
-  {path: '/for-rent', element: <ForRent/>},
-  {path: '/all-houses', element: <AllHouses/>}
+  { path: '/for-sale', element: <ForSale /> },
+  { path: '/for-rent', element: <ForRent /> },
+  { path: '/all-houses', element: <AllHouses /> },
+  { path: '/listing/:id', element: <DetailedListing /> }, // New route for detailed listing
 ];
