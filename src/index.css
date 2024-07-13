@@ -3,3 +3,24 @@
 @tailwind components;
 
 @tailwind utilities;
+
+
+
+  .floating-label {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  .floating-input,
+  .floating-textarea,
+  .floating-checkbox {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .floating-input:focus + label,
+  .floating-textarea:focus + label,
+  .floating-checkbox:focus + label {
+    transform: translateY(-20px);
+    font-size: 12px;
+  }

@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MyDropzone, videoURL } from './Dropzone';
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 import { getStorage, ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../firebase';
 
-export default function CreateListing({formDataProp, onChangeProp, onSubmitProp}) {
+const ProgressBar = ({ progress }) => (
+  <div className="progress-bar  z-50   w-full  bg-gray-200 h-4 rounded-lg overflow-hidden my-4">
+    <div className="progress-bar-inner bg-blue-600 h-full" style={{ width: `${progress}%` }} />
+    <span className="progress-text text-center block text-sm mt-2">{progress}%</span>
+  </div>
+);
+
+export default function CreateListing() {
   const auth = getAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -29,7 +35,7 @@ export default function CreateListing({formDataProp, onChangeProp, onSubmitProp}
     town: '',
     section: '',
     landMark: '',
-    
+    location: '', // new location field
   });
 
   const {
@@ -48,12 +54,37 @@ export default function CreateListing({formDataProp, onChangeProp, onSubmitProp}
     section,
     landMark,
     town,
+    location, // new location field
   } = formData;
 
-  // the onChnage function
+  const [progress, setProgress] = useState(0);
+
+  const calculateFormProgress = () => {
+    const fields = [
+      type,
+      name,
+      bedroom,
+      hall,
+      description,
+      price,
+      region,
+      district,
+      town,
+      section,
+      landMark,
+    ];
+    const filledFields = fields.filter((field) => field !== '' && field !== false);
+    const totalFields = fields.length;
+    const completion = Math.round((filledFields.length / totalFields) * 100);
+    setProgress(completion);
+  };
+
+  useEffect(() => {
+    calculateFormProgress();
+  }, [formData]);
+
   const onChange = (e) => {
     e.preventDefault();
-    console.log(type);
     let boolean = null;
     if (e.target.value === 'true') {
       boolean = true;
@@ -61,14 +92,12 @@ export default function CreateListing({formDataProp, onChangeProp, onSubmitProp}
     if (e.target.value === 'false') {
       boolean = false;
     }
-    // if it is a file
     if (e.target.files) {
       setFormData((prevState) => ({
         ...prevState,
         images: e.target.files,
       }));
     }
-    // if text or an Image
     if (!e.target.files) {
       setFormData((prevState) => ({
         ...prevState,
@@ -77,57 +106,76 @@ export default function CreateListing({formDataProp, onChangeProp, onSubmitProp}
     }
   };
 
-  //  form submission
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setFormData((prevState) => ({
+            ...prevState,
+            location: `${latitude}, ${longitude}`,
+          }));
+        },
+        (error) => {
+          console.error(error);
+          toast.error('Unable to retrieve your location');
+        }
+      );
+    } else {
+      toast.error('Geolocation is not supported by this browser');
+    }
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log(formData);
     if (images.length >= 6) {
       toast.error("can't upload more than 6 images");
+      return;
     }
 
     const storeImages = async (image) => {
       return new Promise((resolve, reject) => {
         const storage = getStorage();
-        // creating a dynamic imageurl
         const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
         const storageRef = ref(storage, fileName);
         const uploadTask = uploadBytesResumable(storageRef, image);
-        //
+
         uploadTask.on(
           'state_changed',
           (snapshot) => {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setProgress(progress);
             switch (snapshot.state) {
-              case 'pause':
-                console.log('state is paused');
+              case 'paused':
+                console.log('Upload is paused');
                 break;
               case 'running':
-                console.log('uploading');
+                console.log('Upload is running');
                 break;
-              case 'success':
-                console.log('done');
+              default:
+                break;
             }
           },
           (error) => {
             reject(error);
-            console.log(error);
+            console.error(error);
           },
-
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
               resolve(downloadURL);
             });
-          },
+          }
         );
       });
     };
-    // getting the images from the store images array and mapping them into the store images array.
+
     const imgUrls = await Promise.all([...images].map((image) => storeImages(image))).catch((error) => {
-      toast.error('oops error uploading images');
+      toast.error('Error uploading images');
+      setLoading(false);
+      return;
     });
 
-    // creating a copy of the formData
     const formDataCopy = {
       ...formData,
       imgUrls,
@@ -138,8 +186,10 @@ export default function CreateListing({formDataProp, onChangeProp, onSubmitProp}
     delete formDataCopy.images;
 
     const docRef = await addDoc(collection(db, 'listings'), formDataCopy);
-    docRef && setLoading(false);
-    toast.success('listings created');
+    if (docRef) {
+      setLoading(false);
+      toast.success('Listing created successfully');
+    }
   };
 
   if (loading) {
@@ -147,71 +197,61 @@ export default function CreateListing({formDataProp, onChangeProp, onSubmitProp}
   }
 
   return (
-    <section className="   w-full mx-auto">
-      <div className=" max-w-md  mx-auto my-12  border-2  border-b-primary  border-t-primary bg-white p-2">
-        <h1 className="m-2 p-2 text-center font-menu text-xl">Create Listing</h1>
-
-        <form className="font-menu " onSubmit={onSubmit}>
-          <p className=" p-2 font-body font-semibold text-text underline">Sell or Rent</p>
-
-          <div className="flex space-x-10 font-menu">
-            <button
-              id="type"
-              type="button"
-              onClick={onChange}
-              value="sell"
-              className={`w-full rounded px-7 py-3 text-sm uppercase shadow-md transition duration-200 ease-in-out hover:shadow-lg focus:shadow-lg active:shadow-lg ${
-                type === 'sell' ? 'bg-slate-500 text-white' : 'bg-white'
-              }`}
-            >
-              Sell
-            </button>
-            <button
-              id="type"
-              type="button"
-              onClick={onChange}
-              value="rent"
-              className={`w-full rounded px-7 py-3  text-sm uppercase shadow-md transition duration-200 ease-in-out hover:shadow-lg focus:shadow-lg active:shadow-lg ${
-                type === 'rent' ? 'bg-slate-500 text-white' : 'bg-white'
-              }`}
-            >
-              Rent
-            </button>
+    <section className="w-full mx-auto">
+      <div className="max-w-2xl mx-auto my-12 p-6 border-2 border-primary bg-white shadow-lg rounded-lg">
+        <h1 className="text-2xl font-bold text-center mb-6 font-header text-secondary border-b-2 py-2">Create Listing</h1>
+        <ProgressBar progress={progress} />
+        <form className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 w-full" onSubmit={onSubmit}>
+          <div className="flex flex-col col-span-2">
+            <label className="floating-label font-body font-light">
+              Sell or Rent
+              <select
+                id="type"
+                onChange={onChange}
+                value={type}
+                className="floating-input focus:outline-none focus:ring-primary focus:ring-[1px] transition-all ease-in-out"
+              >
+                <option value="sell">Sell</option>
+                <option value="rent">Rent</option>
+              </select>
+            </label>
           </div>
 
-          <div className="my-3 ">
-            <p> Title:</p>
-
-            <input
-              type="text"
-              name="name"
-              value={name}
-              onChange={onChange}
-              id="name"
-              placeholder=" e.g two bed room apartment"
-              required
-              className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
-            />
+          <div className="col-span-2 sm:col-span-1">
+            <label className="floating-label font-body font-light">
+              Title
+              <input
+                type="text"
+                name="name"
+                value={name}
+                onChange={onChange}
+                id="name"
+                placeholder="e.g. Two bedroom apartment"
+                required
+                className="floating-input focus:outline-none focus:ring-primary focus:ring-[1px] transition-all ease-in-out "
+              />
+            </label>
           </div>
 
-          <div className="my-3 ">
-            <p> Price:</p>
-
-            <input
-              type="Number"
-              name="price"
-              value={price}
-              onChange={onChange}
-              id="price"
-              placeholder="1,000 in cedis"
-              required
-              className="w-full border-b border-secondary bg-white  px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
-            />
+          <div className="col-span-2 sm:col-span-1">
+            <label className="floating-label font-body font-light">
+              Price
+              <input
+                type="number"
+                name="price"
+                value={price}
+                onChange={onChange}
+                id="price"
+                placeholder="e.g. 1000 in cedis"
+                required
+                className="floating-input focus:outline-none focus:ring-primary focus:ring-[1px] transition-all ease-in-out"
+              />
+            </label>
           </div>
-          <div className="space-between my-3 flex space-x-10 ">
-            <div>
-              <p>Bedrooms</p>
 
+          <div className="col-span-2 sm:col-span-1">
+            <label className="floating-label font-body font-light">
+              Bedrooms
               <input
                 type="number"
                 name="bedroom"
@@ -220,12 +260,14 @@ export default function CreateListing({formDataProp, onChangeProp, onSubmitProp}
                 id="bedroom"
                 max={50}
                 required
-                className="w-full border-b border-secondary bg-white  px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
+                className="floating-input focus:outline-none focus:ring-primary focus:ring-[1px] transition-all ease-in-out"
               />
-            </div>
-            <div>
-              <p>Hall</p>
+            </label>
+          </div>
 
+          <div className="col-span-2 sm:col-span-1">
+            <label className="floating-label font-body font-light">
+              Hall
               <input
                 type="number"
                 name="hall"
@@ -234,201 +276,199 @@ export default function CreateListing({formDataProp, onChangeProp, onSubmitProp}
                 id="hall"
                 max={50}
                 required
-                className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
+                className="floating-input focus:outline-none focus:ring-primary focus:ring-[1px] transition-all ease-in-out"
               />
-            </div>
-          </div>
-          <div className="my-3 ">
-            <p>Description:</p>
-
-            <textarea
-              type="text"
-              name="name"
-              value={description}
-              onChange={onChange}
-              id="description"
-              required
-              className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
-            />
-          </div>
-          <p>Bathroom</p>
-          <div className="flex space-x-10 font-menu">
-            <button
-              id="bathroom"
-              type="button"
-              onClick={onChange}
-              value={'true'}
-              className={`w-full rounded px-7 py-3 text-sm uppercase shadow-md transition duration-200 ease-in-out hover:shadow-lg focus:shadow-lg active:shadow-lg ${
-                bathroom ? 'bg-slate-500 text-white' : 'bg-white'
-              }`}
-            >
-              yes
-            </button>
-            <button
-              id="bathroom"
-              type="button"
-              onClick={onChange}
-              value={'false'}
-              className={`w-full rounded px-7 py-3  text-sm uppercase shadow-md transition duration-200 ease-in-out hover:shadow-lg focus:shadow-lg active:shadow-lg ${
-                !bathroom ? 'bg-slate-500 text-white' : 'bg-white'
-              }`}
-            >
-              No
-            </button>
+            </label>
           </div>
 
-          <p className="my-3">Toilet</p>
-          <div className="flex space-x-10 font-menu">
-            <button
-              id="toilet"
-              type="button"
-              onClick={onChange}
-              value={'true'}
-              className={`w-full rounded px-7 py-3 text-sm uppercase shadow-md transition duration-200 ease-in-out hover:shadow-lg focus:shadow-lg active:shadow-lg ${
-                toilet ? 'bg-slate-500 text-white' : 'bg-white'
-              }`}
-            >
-              yes
-            </button>
-            <button
-              id="toilet"
-              type="button"
-              onClick={onChange}
-              value={'false'}
-              className={`w-full rounded px-7 py-3  text-sm uppercase shadow-md transition duration-200 ease-in-out hover:shadow-lg focus:shadow-lg active:shadow-lg ${
-                !toilet ? 'bg-slate-500 text-white' : 'bg-white'
-              }`}
-            >
-              No
-            </button>
+          <div className=" flex">
+            <label className="floating-label font-body font-light">
+              Bathrooms
+              <input
+                type="number"
+                name="bathroom"
+                value={bathroom}
+                onChange={onChange}
+                id="bathroom"
+                max={50}
+                required
+                className="floating-input focus:outline-none focus:ring-primary focus:ring-[1px] transition-all ease-in-out"
+              />
+            </label>
+           
           </div>
-          <p className="my-3">Kitchen</p>
-          <div className="flex space-x-10 font-menu">
-            <button
-              id="Kitchen"
-              type="button"
-              onClick={onChange}
-              value={'true'}
-              className={`w-full rounded px-7 py-3 text-sm uppercase shadow-md transition duration-200 ease-in-out hover:shadow-lg focus:shadow-lg active:shadow-lg ${
-                Kitchen ? 'bg-slate-500 text-white' : 'bg-white'
-              }`}
-            >
-              yes
-            </button>
-            <button
-              id="Kitchen"
-              type="button"
-              onClick={onChange}
-              value={'false'}
-              className={`w-full rounded px-7 py-3  text-sm uppercase shadow-md transition duration-200 ease-in-out hover:shadow-lg focus:shadow-lg active:shadow-lg ${
-                !Kitchen ? 'bg-slate-500 text-white' : 'bg-white'
-              }`}
-            >
-              No
-            </button>
-          </div>
-          <div className="my-3 ">
-            <p>Region:</p>
+          <div className="flex items-center justify-center">
+        
+        <label className="floating-label font-body flex items-center gap-2 ml-2 font-light">
+          Kitchen
+          <input
+            type="checkbox"
+            name="Kitchen"
+            value={Kitchen}
+            onChange={onChange}
+            id="Kitchen"
+            className="floating-checkbox"
+          />
+        </label>
+        <label className="floating-label font-body font-light flex items-center gap-2 ml-2 ">
+          Toilet
+          <input
+         type="checkbox"
+         name="toilet"
+         value={toilet}
+         onChange={onChange}
+         id="toilet"
+         className="floating-checkbox"
+       />
+      </label>
+      </div>
 
-            <input
-              type="text"
-              name="region"
-              value={region}
-              onChange={onChange}
-              id="region"
-              placeholder="e.g Greater Accra"
-              required
-              className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
-            />
-          </div>
-          <div className="my-3 ">
-            <p>District:</p>
+          
 
-            <input
-              id="district"
-              type="text"
-              name="district"
-              value={district}
-              onChange={onChange}
-              placeholder="e.g Ashaiman"
-              required
-              className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
-            />
-          </div>
-          <div className="my-3 ">
-            <p>Town:</p>
+     
+<div className="col-span-2 sm:col-span-1">
+        <label className="floating-label font-body font-light">
+          Region
+          <input
+            type="text"
+            name="region"
+            value={region}
+            onChange={onChange}
+            id="region"
+            placeholder="Region"
+            required
+            className="floating-input focus:outline-none focus:ring-primary focus:ring-[1px] transition-all ease-in-out"
+          />
+        </label>
+      </div>
 
-            <input
-              type="text"
-              name="region"
-              value={town}
-              onChange={onChange}
-              id="town"
-              placeholder="e.g Ashaiman"
-              required
-              className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
-            />
-          </div>
-          <div className="my-3 ">
-            <p>Section:</p>
+      <div className="col-span-2 sm:col-span-1">
+        <label className="floating-label font-body font-light">
+          District
+          <input
+            type="text"
+            name="district"
+            value={district}
+            onChange={onChange}
+            id="district"
+            placeholder="District"
+            required
+            className="floating-input focus:outline-none focus:ring-primary focus:ring-[1px] transition-all ease-in-out"
+          />
+        </label>
+      </div>
 
-            <input
-              type="text"
-              name="section"
-              value={section}
-              onChange={onChange}
-              id="section"
-              placeholder="e.g Ashaiman Quaters"
-              required
-              className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
-            />
-          </div>
-          <div className="my-3 ">
-            <p>Landmark:</p>
+      <div className="col-span-2 sm:col-span-1">
+        <label className="floating-label font-body font-light">
+          Town
+          <input
+            type="text"
+            name="town"
+            value={town}
+            onChange={onChange}
+            id="town"
+            placeholder="Town"
+            required
+            className="floating-input focus:outline-none focus:ring-primary focus:ring-[1px] transition-all ease-in-out"
+          />
+        </label>
+      </div>
 
-            <input
-              type="text"
-              name="region"
-              value={landMark}
-              onChange={onChange}
-              id="landMark"
-              placeholder="e.g opposite police Station"
-              required
-              className="w-full border-b border-secondary bg-white px-3 py-1 text-text transition-all duration-200 ease-out focus:border-primary focus:outline-none"
-            />
-          </div>
-          <div className="my-3">
-            <label htmlFor="images">Images: Max 6</label>
-            <input
-              type="file"
-              accept="image/*"
-              name="images"
-              onChange={onChange}
-              id="images"
-              multiple
-              required
-              className="w-full py-1 text-text"
-            />
-          </div>
+      <div className="col-span-2 sm:col-span-1">
+        <label className="floating-label font-body font-light">
+          Section
+          <input
+            type="text"
+            name="section"
+            value={section}
+            onChange={onChange}
+            id="section"
+            placeholder="Section"
+            required
+            className="floating-input focus:outline-none focus:ring-primary focus:ring-[1px] transition-all ease-in-out"
+          />
+        </label>
+      </div>
 
-          {/* <div className="my-3">
-          <label htmlFor="video">Video (Max 30s):</label>
+      <div className="col-span-2 sm:col-span-1">
+        <label className="floating-label font-body font-light">
+          LandMark
+          <input
+            type="text"
+            name="landMark"
+            value={landMark}
+            onChange={onChange}
+            id="landMark"
+            placeholder="LandMark"
+            required
+            className="floating-input focus:outline-none focus:ring-primary focus:ring-[1px] transition-all ease-in-out"
+          />
+        </label>
+      </div>
+      <div className="col-span-2">
+        <label className="floating-label font-body font-light">
+          Images
           <input
             type="file"
-            accept="video/*"
-            name="video"
+            name="images"
+            id="images"
             onChange={onChange}
-            id="video"
-            value={video}
+            accept=".jpg,.png,.jpeg"
+            multiple
             required
-            className="w-full py-1 text-text"
+            className="floating-input focus:outline-none focus:ring-primary focus:ring-[1px] transition-all ease-in-out"
           />
-        </div> */}
-          <MyDropzone className={`my-3 cursor-pointer rounded  border border-text p-3`} />
-
-          <button className="w-full rounded bg-primary p-3 text-center font-semibold text-white"> Submit</button>
-        </form>
+        </label>
       </div>
-    </section>
-  );
+      <div className="col-span-2 mx-auto w-full">
+        <label className="floating-label font-body font-light ">
+          Description
+          <textarea
+            name="description"
+            value={description}
+            onChange={onChange}
+            id="description"
+            placeholder="Description"
+            required
+            className="floating-textarea focus:outline-none focus:ring-primary focus:ring-[1px] transition-all ease-in-out"
+          ></textarea>
+        </label>
+      </div>
+
+      
+
+      <div className="col-span-2">
+        <MyDropzone />
+      </div>
+
+      <div className="col-span-2">
+        <button
+          type="button"
+          onClick={getCurrentLocation}
+          className="bg-blue-600 text-white py-2 px-4 rounded-lg"
+        >
+          Get Current Location
+        </button>
+        <input
+          type="text"
+          name="location"
+          value={location}
+          readOnly
+          className="floating-input focus:outline-none focus:ring-primary focus:ring-[1px] transition-all ease-in-out mt-4"
+          placeholder="Location will be auto-filled"
+        />
+      </div>
+
+      <div className="col-span-2">
+        <button
+          type="submit"
+          className="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-primary-dark transition duration-200"
+        >
+          Submit Listing
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+);
 }
