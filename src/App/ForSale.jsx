@@ -3,6 +3,7 @@ import { db } from '../firebase';
 import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
 import ListingItemForSale from './ListingItemForSale';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import SkeletonLoader from './SkeletonLoader';
 
 export default function ForSale() {
   const [listingsForSale, setListingsForSale] = useState([]);
@@ -33,7 +34,7 @@ export default function ForSale() {
     fetchListings();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><SkeletonLoader count={6} /></div>;
   
   return (
     <div className='mx-auto max-w-6xl'>

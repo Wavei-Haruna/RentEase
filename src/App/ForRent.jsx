@@ -1,13 +1,15 @@
+// components/ForRent.js
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
 import ListingItemForSale from './ListingItemForSale';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { useNavigate } from 'react-router-dom';
+import SkeletonLoader from './SkeletonLoader'; // Import SkeletonLoader
 
 export default function ForRent() {
   const [listingsForRent, setListingsForRent] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -33,7 +35,7 @@ export default function ForRent() {
     fetchListings();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <SkeletonLoader count={6} />; // Use SkeletonLoader while loading
   
   return (
     <div className='mx-auto max-w-6xl'>
