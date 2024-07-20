@@ -7,6 +7,7 @@ import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router';
 import { toast, ToastContainer } from 'react-toastify';
 import GAuth from './gAuth';
+import SlideInRight from '../Animations/SlideInRight';
 
 export default function GetStarted({ onClose, openSignIn, openReset }) {
   const [formData, setFormData] = useState({
@@ -74,8 +75,9 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
           onClick={onClose}
         />
 
+        <SlideInRight duration={0.5}>
         <form
-          className="mt-8 space-y-6 md:space-y-0  gap-10 grid md:grid-cols-2"
+          className="mt-8  "
           action="#"
           onSubmit={(e) => {
             handleSubmit(e);
@@ -83,6 +85,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
           }}
         >
           {/* first name */}
+          <div className="grid lg:grid-cols-2 gap-x-10 gap-y-3 my-6">
 
           <div>
             <label htmlFor="first_name" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
@@ -92,7 +95,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
               type="text"
               name="first_name"
               id="first_name"
-              className="block w-full rounded-sm focus:outline-none border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              className="block w-full rounded-full focus:outline-none border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               placeholder="first name"
               value={first_name}
               onChange={handleInputChange}
@@ -108,7 +111,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
               type="text"
               name="last_name"
               id="last_name"
-              className="block w-full rounded-sm focus:outline-none border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              className="block w-full rounded-full focus:outline-none border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               placeholder="first name"
               value={last_name}
               onChange={handleInputChange}
@@ -124,7 +127,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
               type="email"
               name="email"
               id="email"
-              className="block w-full rounded-sm focus:outline-none border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              className="block w-full rounded-full focus:outline-none border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               placeholder="example@gmail.com"
               value={email}
               onChange={handleInputChange}
@@ -140,14 +143,20 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
               name="password"
               id="password"
               placeholder="••••••••"
-              className="block w-full rounded-sm focus:outline-none border border-gray-300 bg-gray-50 p-2.5  text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              className="block w-full rounded-full focus:outline-none border border-gray-300 bg-gray-50 p-2.5  text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               value={password}
               onChange={handleInputChange}
               required
             />
           </div>
-          <div className="flex items-start">
-            <div className="flex h-5 items-center">
+          </div>
+          {/* remember me section */}
+
+          <div className=" items-start grid grid-cols-2">
+            <div className="flex h-5 items-center space-x-6 mb-4">
+            <label htmlFor="remember" className="font-medium text-gray-500 dark:text-gray-400">
+                Remember me
+              </label>
               <input
                 id="remember"
                 aria-describedby="remember"
@@ -158,12 +167,10 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
                 onChange={handleInputChange}
                 required
               />
+               
             </div>
-            <div className="mx-3 text-sm">
-              <label htmlFor="remember" className="font-medium text-gray-500 dark:text-gray-400">
-                Remember me
-              </label>
-            </div>
+            
+           
             <a
               href="#"
               className="ml-auto cursor-pointer text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
@@ -172,22 +179,25 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
               Lost Password?
             </a>
           </div>
-          <div className='justify-center md:flex items-center'>
+
+          <div className='grid md:grid-cols-2 gap-x-10'>
           <button
             type="submit"
-            className="w-full rounded-sm  bg-primary py-2 text-center px-5 text-base font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-primary dark:focus:ring-blue-800 sm:w-auto"
+            className="w-full rounded-full  bg-primary py-2 text-center px-5 text-base font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-primary dark:focus:ring-blue-800 sm:w-auto"
           >
             Sign Up
           </button>
             <GAuth/>
           </div>
-          <div className="text-sm font-medium text-gray-900 dark:text-white">
+          <div className="text-sm font-medium my-6 text-gray-900 dark:text-white">
             Have an account?
-            <a className="ml-3 cursor-pointer text-blue-600 hover:underline dark:text-blue-500" onClick={openSignIn}>
+            <a className="ml-3 cursor-pointer text-blue-600 hover:underline dark:text-blue-500 font-body " onClick={openSignIn}>
               Sign In
             </a>
           </div>
         </form>
+        </SlideInRight>
+
       </div>
     </m.div>
   );

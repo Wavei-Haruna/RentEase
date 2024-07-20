@@ -38,9 +38,9 @@ signInWithPopup(auth, provider)
 
   }
   return (
-<div className='flex ml-4 justify-center items-center'>
-            <p className='font-menu font-semibold'> or continue with</p>
-            <button onClick={handleSignInWithGoogleProvider} className='w-full rounded-sm mx-4 bg-primary py-2 text-center px-5 text-base font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-primary dark:focus:ring-blue-800 sm:w-auto'>
+<div className='md:flex  items-center'>
+            <p className='font-menu font-semibold text-center my-3'> or signup with</p>
+            <button onClick={handleSignInWithGoogleProvider} className='w-full rounded-full flex justify-center bg-red-500 py-2 text-center px-5 text-base font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-primary dark:focus:ring-blue-800 sm:w-auto'>
             <FaGoogle className='ml-2 cursor-pointer text-white text-2xl'/>  </button>
           </div>
   )
