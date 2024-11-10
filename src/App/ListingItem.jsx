@@ -1,93 +1,75 @@
 import moment from 'moment';
 import React, { useState } from 'react';
-import { MdKitchen, MdLocationOn } from 'react-icons/md';
-import { MdEdit, MdDelete } from 'react-icons/md';
-import { FaBed } from 'react-icons/fa';
-import { FaHome } from 'react-icons/fa';
-import { FaBath } from 'react-icons/fa';
+import { MdKitchen, MdLocationOn, MdEdit, MdDelete, MdWater } from 'react-icons/md';
+import { FaBed, FaHome, FaBath } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
-
 
 export default function ListingItem({ listing, id, onDelete }) {
   const navigate = useNavigate();
-
   const [checked, setChecked] = useState(false);
-
 
   const handleChange = () => {
     setChecked((prevChecked) => !prevChecked);
   };
 
-
-
   const date = moment(listing?.timeStamp?.seconds * 1000);
+
   return (
-    <div className='bg-white  rounded-lg shadow-md p-6 space-y-4'  >
-      <div className='relative w-full h-64'>
-        <img src={listing.imgUrls[0]} alt="" className='w-full h-full transition-all ease-in duration-150  object-cover rounded-lg hover:scale-105 cursor-pointer' onClick={() => navigate(`/listing/${id}`)}/>
-        <div className='absolute bottom-4 right-4 z-10 flex space-x-4'>
-          <button className='bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded' onClick={()=>onDelete(id)}>
-            <MdDelete size={20} />
+    <div className=" w-full space-y-4 rounded-lg p-2 font-body shadow-lg">
+      <div className="relative h-64 w-full">
+        <img
+          src={listing.imgUrls[0]}
+          alt=""
+          className="h-full w-full cursor-pointer rounded-lg object-cover transition-all duration-150 hover:scale-105"
+          onClick={() => navigate(`/listing/${id}`)}
+        />
+        <div className="absolute bottom-4 right-4 flex space-x-3">
+          <button
+            className="rounded bg-red-600 p-1.5 font-medium text-white hover:bg-red-800"
+            onClick={() => onDelete(id)}
+          >
+            <MdDelete size={18} />
           </button>
-          <label className="inline-flex items-center cursor-pointer">
-  <input type="checkbox" value="" className="sr-only peer" checked={checked} onChange={handleChange}/>
-  <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-secondary"></div>
-  <span className="ms-3 text-sm font-medium font-menu text-white font-dark:text-gray-300">{listing.type=='rent'? "Rented":"Sold"}</span>
-</label>
+          <label className="inline-flex cursor-pointer items-center">
+            <input type="checkbox" className="peer sr-only" checked={checked} onChange={handleChange} />
+            <div className="relative h-5 w-10 rounded-full bg-gray-300 after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all peer-checked:bg-blue-500 peer-checked:after:translate-x-full"></div>
+            <span className="ml-2 text-sm font-semibold">{listing.type === 'rent' ? 'Rented' : 'Sold'}</span>
+          </label>
         </div>
-        <div className='absolute top-1 left-2  flex items-center justify-center bg-black p-2 bg-opacity-60 rounded-tl-md  rounded-br-md'>
-          <MdLocationOn className='text-white mr-1' size={20} />
-          <p className='text-sm text-white font-semibold capitalize'>{listing.town}</p>
+        <div className="absolute left-2 top-1 flex items-center rounded-md bg-gray-800 bg-opacity-70 p-1">
+          <MdLocationOn className="mr-1 text-white" size={16} />
+          <p className="text-xs font-medium capitalize text-white">{listing.town}</p>
         </div>
-        <p className='absolute top-1 right-2 text-xs text-white bg-black p-2 bg-opacity-60 rounded-tl-md  rounded-br-md'>{date.fromNow()}</p>
-       
-          <div className="absolute bottom-1 left-2 text-xs text-white font-semibold bg-black p-2 bg-opacity-60 rounded-tl-md  rounded-br-md ">          {listing.type === 'sell' ? <p>For Sale : GHs {listing.price}</p> : <p>For Rent : GHs {listing.price}</p>}
-</div>
-
-        
-       
+        <p className="absolute right-2 top-1 rounded-md bg-gray-800 bg-opacity-70 p-1 text-xs text-white">
+          {date.fromNow()}
+        </p>
+        <div className="absolute bottom-1 left-2 rounded-md bg-gray-800 bg-opacity-70 p-1 text-xs text-white">
+          {listing.type === 'sell' ? `For Sale: GH₵ ${listing.price}` : `For Rent: GH₵ ${listing.price}`}
+        </div>
       </div>
-      <div className=''>
-        <div className='flex justify-between items-center'>
 
-        <p className='text-sm font-bold capitalize'>{listing.name}</p>
-          
-          <div className='flex justify-between items-center'>
-          <p className='text-sm flex justify-center items-center   font-semibold'>
-         
-            <MdKitchen size={20} className=' mr-1 text-primary' />
-            <span className='text-cyan-600 mr-1'>Kitchen: </span> {listing.kitchen ? ' Yes' : ' No'}
-          </p>
-          <p className='text-sm flex justify-center items-center  font-semibold'>
-            <FaBath size={18} className=' ml-4 mr-1 text-primary' />
-            <span className='text-lime-600 mr-1'>Bathroom: </span> {listing.bathroom ? ' Yes' : ' No'}
-          </p>
-          
+      <div>
+        <p className="font-body text-lg font-semibold capitalize text-primary">{listing.name}</p>
+        <div className="mt-2 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <p className="flex items-center font-medium text-secondary">
+              <MdKitchen size={18} className="mr-1  text-yellow-600" />
+              Kitchen: {listing.kitchen ? 'Yes' : 'No'}
+            </p>
+            <p className="flex items-center text-secondary ">
+              <MdWater size={18} className="mr-1 text-blue-300" />
+              Bathroom: {listing.bathroom ? 'Yes' : 'No'}
+            </p>
           </div>
-
-
         </div>
-        <div className='flex justify-center space-x-4 my-2'> 
-          
-        <p className='text-sm font-semibold flex '>
-        <FaBed size={20} className=' mr-1 text-primary' />
-            <span className='text-pink-600'>Bedroom:</span> {listing.bedroom}
-          </p><p className='text-sm font-bold'>
-            <span className='text-orange-600'>Hall:</span> {listing.hall}
+        <div className="mt-4 flex items-center space-x-4 text-secondary">
+          <p className="flex items-center">
+            <FaBed size={18} className="mr-1" />
+            Bedroom: {listing.bedroom}
           </p>
-          
-          <p className='text-sm font-bold'>
-            <span className='text-teal-600'>Toilet:</span> {listing.toilet ? 'Yes' : 'No'}
-          </p>
-        <div className='flex-1'>
-          <p className='text-sm '>
-            <span className='text-indigo-600'></span> {listing.landMark}
-          </p>
-          
+          <p>Toilet: {listing.toilet ? 'Yes' : 'No'}</p>
         </div>
-        
-        </div>
-         
+        <p className="mt-2 text-gray-600">{listing.description}</p>
       </div>
     </div>
   );

@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import MobileNav from './mobileMenu';
 import { useContext } from 'react';
 import { navContext } from './Helpers/Context';
+import { useAuthHook } from '../App/Hooks/useAuthHook';
+
 
 
 const NavBar = () => {

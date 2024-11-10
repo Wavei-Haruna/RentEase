@@ -24,6 +24,7 @@ export default function ForRent() {
             id: doc.id,
             data: doc.data(),
           });
+
         });
         setListingsForRent(listingData);
         setLoading(false);

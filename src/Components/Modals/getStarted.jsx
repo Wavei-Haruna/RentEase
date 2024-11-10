@@ -76,128 +76,127 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
         />
 
         <SlideInRight duration={0.5}>
-        <form
-          className="mt-8  "
-          action="#"
-          onSubmit={(e) => {
-            handleSubmit(e);
-            onClose;
-          }}
-        >
-          {/* first name */}
-          <div className="grid lg:grid-cols-2 gap-x-10 gap-y-3 my-6">
-
-          <div>
-            <label htmlFor="first_name" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-              first Name
-            </label>
-            <input
-              type="text"
-              name="first_name"
-              id="first_name"
-              className="block w-full rounded-full focus:outline-none border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              placeholder="first name"
-              value={first_name}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          {/* last name */}
-          <div>
-            <label htmlFor="last_name" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-              Name
-            </label>
-            <input
-              type="text"
-              name="last_name"
-              id="last_name"
-              className="block w-full rounded-full focus:outline-none border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              placeholder="first name"
-              value={last_name}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-              Your email
-            </label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              className="block w-full rounded-full focus:outline-none border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              placeholder="example@gmail.com"
-              value={email}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-              Your password
-            </label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              placeholder="••••••••"
-              className="block w-full rounded-full focus:outline-none border border-gray-300 bg-gray-50 p-2.5  text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              value={password}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          </div>
-          {/* remember me section */}
-
-          <div className=" items-start grid grid-cols-2">
-            <div className="flex h-5 items-center space-x-6 mb-4">
-            <label htmlFor="remember" className="font-medium text-gray-500 dark:text-gray-400">
-                Remember me
-              </label>
-              <input
-                id="remember"
-                aria-describedby="remember"
-                name="remember"
-                type="checkbox"
-                className="focus:ring-3 h-4 w-4 rounded border-gray-300 bg-gray-50 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-                checked={remember}
-                onChange={handleInputChange}
-                required
-              />
-               
-            </div>
-            
-           
-            <a
-              href="#"
-              className="ml-auto cursor-pointer text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
-              onClick={openReset}
-            >
-              Lost Password?
-            </a>
-          </div>
-
-          <div className='grid md:grid-cols-2 gap-x-10'>
-          <button
-            type="submit"
-            className="w-full rounded-full  bg-primary py-2 text-center px-5 text-base font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-primary dark:focus:ring-blue-800 sm:w-auto"
+          <form
+            className="mt-8  "
+            action="#"
+            onSubmit={(e) => {
+              handleSubmit(e);
+              onClose;
+            }}
           >
-            Sign Up
-          </button>
-            <GAuth/>
-          </div>
-          <div className="text-sm font-medium my-6 text-gray-900 dark:text-white">
-            Have an account?
-            <a className="ml-3 cursor-pointer text-blue-600 hover:underline dark:text-blue-500 font-body " onClick={openSignIn}>
-              Sign In
-            </a>
-          </div>
-        </form>
-        </SlideInRight>
+            {/* first name */}
+            <div className="my-6 grid gap-x-10 gap-y-3 lg:grid-cols-2">
+              <div>
+                <label htmlFor="first_name" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  name="first_name"
+                  id="first_name"
+                  className="block w-full rounded-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                  placeholder="first name"
+                  value={first_name}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              {/* last name */}
+              <div>
+                <label htmlFor="last_name" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  name="last_name"
+                  id="last_name"
+                  className="block w-full rounded-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                  placeholder="last name"
+                  value={last_name}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                  Your email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  className="block w-full rounded-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                  placeholder="example@gmail.com"
+                  value={email}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                  Your password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  placeholder="••••••••"
+                  className="block w-full rounded-full border border-gray-300 bg-gray-50 p-2.5 text-sm  text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                  value={password}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+            </div>
+            {/* remember me section */}
 
+            <div className=" grid grid-cols-2 items-start">
+              <div className="mb-4 flex h-5 items-center space-x-6">
+                <label htmlFor="remember" className="font-medium text-gray-500 dark:text-gray-400">
+                  Remember me
+                </label>
+                <input
+                  id="remember"
+                  aria-describedby="remember"
+                  name="remember"
+                  type="checkbox"
+                  className="focus:ring-3 h-4 w-4 rounded border-gray-300 bg-gray-50 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                  checked={remember}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <a
+                href="#"
+                className="ml-auto cursor-pointer text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
+                onClick={openReset}
+              >
+                Lost Password?
+              </a>
+            </div>
+
+            <div className="grid w-full gap-x-10 md:grid-cols-2 ">
+              <button
+                type="submit"
+                className="w-full rounded-full  bg-primary px-5 py-2 text-center text-base font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-primary dark:focus:ring-blue-800"
+              >
+                Sign Up
+              </button>
+              <GAuth />
+            </div>
+            <div className="my-6 text-sm font-medium text-gray-900 dark:text-white">
+              Have an account?
+              <a
+                className="ml-3 cursor-pointer font-body text-blue-600 hover:underline dark:text-blue-500 "
+                onClick={openSignIn}
+              >
+                Sign In
+              </a>
+            </div>
+          </form>
+        </SlideInRight>
       </div>
     </m.div>
   );

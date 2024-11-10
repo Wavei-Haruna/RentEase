@@ -2,8 +2,7 @@ import { getAuth, updateProfile, onAuthStateChanged, signOut } from 'firebase/au
 import { doc, updateDoc } from 'firebase/firestore';
 import React, { useState, useEffect, useReducer } from 'react';
 import { FaGear, FaUserGear } from 'react-icons/fa6';
-import { FiMessageSquare } from 'react-icons/fi';
-import { FaBell, FaList, FaPlusCircle, FaUserEdit } from 'react-icons/fa';
+import { FaBell, FaList } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import { db } from '../firebase';
@@ -13,6 +12,8 @@ import Notifications from './Hooks/Notifications';
 import Reviews from './Reviews';
 import Messages from './Messages';
 import MyListings from './Hooks/MyListings';
+import { AiFillHome } from 'react-icons/ai';
+import { Link } from 'react-router-dom';
 
 export default function Profile() {
   const auth = getAuth();
@@ -26,7 +27,7 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
+
   const { first_name, last_name, userName, email } = formData;
 
   const handleInputChange = (e) => {
@@ -144,96 +145,103 @@ export default function Profile() {
   };
 
   return (
-    <section className="w-full relative overflow-x-hidden bg-gray-200">
+    <section className="relative w-full overflow-x-hidden bg-gray-200">
       {isUpdating && (
         <div className="absolute top-0 z-10 m-0 flex h-screen w-screen flex-col items-center justify-center bg-black bg-opacity-70">
           <Spinner />
         </div>
       )}
-      <header className={`fixed top-0 z-50 w-full bg-primary px-8 py-2 flex justify-between items-center ${sidebarOpen ? 'ml-72' : ''}`}>
+      <header
+        className={`fixed top-0 z-50 flex w-full items-center justify-between bg-primary px-8 py-2 ${sidebarOpen ? 'ml-72' : ''}`}
+      >
         <button
-          className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-500 hover:bg-gray-700 transition-all ease-in-out duration-200"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-500 transition-all duration-200 ease-in-out hover:bg-gray-700"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <MdMenu className="text-white" />
         </button>
-        <h1 className="text-2xl font-bold text-white font-header">Profile</h1>
+        <Link to={'/'} className="flex items-center text-white transition-all duration-100 ease-out hover:scale-105">
+          Home <AiFillHome className="mx-2" />
+        </Link>
+        <h1 className="font-header text-2xl font-bold text-white">Profile</h1>
       </header>
-      <div className={`fixed top-0 flex flex-col justify-between items-center z-40 left-0 w-72 h-screen bg-white shadow-md transition-all ease-in-out duration-200 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className='w-full bg-[#f0f0f0] text-primary'>
-          <h3 className="flex gap-2 justify-center items-center my-3 font-menu text-gray-white px-4 py-2 transition-all ease-in-out duration-200">
-            <FaUserGear size={44} className="mr-2 bg-primary rounded-full p-1 w-fit text-white" />
+      <div
+        className={`fixed left-0 top-0 z-40 flex h-screen w-72 flex-col items-center justify-between bg-white shadow-md transition-all duration-200 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+      >
+        <div className="w-full bg-[#f0f0f0] text-primary">
+          <h3 className="text-gray-white my-3 flex items-center justify-center gap-2 px-4 py-2 font-menu transition-all duration-200 ease-in-out">
+            <FaUserGear size={44} className="mr-2 w-fit rounded-full bg-primary p-1 text-white" />
             {userName}
           </h3>
-          <h3 className='my-3 font-semibold md:text-xl text-center font-header'>Welcome Dashboard</h3>
+          <h3 className="my-3 text-center font-header font-semibold md:text-xl">Welcome Dashboard</h3>
         </div>
         <ul className="list-none px-6">
           <li>
             <button
-              className="flex gap-2 justify-center items-center my-3 font-menu text-gray-800 px-4 py-2 hover:bg-secondary rounded-md transition-all ease-in-out duration-200"
+              className="my-3 flex items-center justify-center gap-2 rounded-md px-4 py-2 font-menu text-gray-800 transition-all duration-200 ease-in-out hover:bg-secondary"
               onClick={() => handleDashBoardItemClick(actionTypes.showMyListings)}
             >
-              <FaList size={24} className="mr-2 bg-primary rounded-full p-1 w-fit text-white" />
+              <FaList size={24} className="mr-2 w-fit rounded-full bg-primary p-1 text-white" />
               My Listings
             </button>
           </li>
           <li>
             <button
-              className="flex gap-2 justify-center items-center my-3 font-menu text-gray-800 px-4 py-2 hover:bg-secondary rounded-md transition-all ease-in-out duration-200"
+              className="my-3 flex items-center justify-center gap-2 rounded-md px-4 py-2 font-menu text-gray-800 transition-all duration-200 ease-in-out hover:bg-secondary"
               onClick={() => handleDashBoardItemClick(actionTypes.showNotifications)}
             >
-              <FaBell size={24} className="mr-2 bg-primary rounded-full p-1 w-fit text-white" />
+              <FaBell size={24} className="mr-2 w-fit rounded-full bg-primary p-1 text-white" />
               Notifications
             </button>
           </li>
           <li>
             <button
-              className="flex gap-2 justify-center items-center my-3 font-menu text-gray-800 px-4 py-2 hover:bg-secondary rounded-md transition-all ease-in-out duration-200"
+              className="my-3 flex items-center justify-center gap-2 rounded-md px-4 py-2 font-menu text-gray-800 transition-all duration-200 ease-in-out hover:bg-secondary"
               onClick={() => handleDashBoardItemClick(actionTypes.showReviews)}
             >
-              <MdReviews size={24} className="mr-2 bg-primary rounded-full p-1 w-fit text-white" />
+              <MdReviews size={24} className="mr-2 w-fit rounded-full bg-primary p-1 text-white" />
               Reviews
             </button>
           </li>
           <li>
             <button
-              className="flex gap-2 justify-center items-center my-3 font-menu text-gray-800 px-4 py-2 hover:bg-secondary rounded-md transition-all ease-in-out duration-200"
+              className="my-3 flex items-center justify-center gap-2 rounded-md px-4 py-2 font-menu text-gray-800 transition-all duration-200 ease-in-out hover:bg-secondary"
               onClick={() => handleDashBoardItemClick(actionTypes.showMessages)}
             >
-              <MdMessage size={24} className="mr-2 bg-primary rounded-full p-1 w-fit text-white" />
+              <MdMessage size={24} className="mr-2 w-fit rounded-full bg-primary p-1 text-white" />
               Messages
             </button>
           </li>
         </ul>
         <div>
           <button
-            className="flex gap-2 justify-center items-center my-3 font-menu text-gray-800 px-4 py-2 hover:bg-secondary rounded-md transition-all ease-in-out duration-200"
+            className="my-3 flex items-center justify-center gap-2 rounded-md px-4 py-2 font-menu text-gray-800 transition-all duration-200 ease-in-out hover:bg-secondary"
             onClick={() => handleDashBoardItemClick(actionTypes.showSettings)}
           >
-            <FaGear size={24} className="mr-2 bg-primary rounded-full p-1 w-fit text-white" />
+            <FaGear size={24} className="mr-2 w-fit rounded-full bg-primary p-1 text-white" />
             Settings
           </button>
           <button
-            className="flex gap-2 justify-center items-center font-menu text-white bg-black py-1 rounded-md ml-6 my-6 px-4 hover:bg-other hover:text-red-600 transition-all ease-in-out duration-200"
+            className="my-6 ml-6 flex items-center justify-center gap-2 rounded-md bg-black px-4 py-1 font-menu text-white transition-all duration-200 ease-in-out hover:bg-other hover:text-red-600"
             onClick={handleSignOut}
           >
             Logout
           </button>
         </div>
       </div>
-      <div className="pt-24 md:pt-28 px-4 md:px-8">
+      <div className="px-4 pt-24 md:px-8 md:pt-28">
         {state.showSettings && (
           <div>
             {isEditing ? (
               <form onSubmit={handleFormSubmit} className="mb-4">
-                <div className="mb-4 flex items-center">
+                <div className="mb-4 flex items-center gap-x-10">
                   <input
                     type="text"
                     name="first_name"
                     value={first_name}
                     placeholder={userName.split(' ')[0]}
                     onChange={handleInputChange}
-                    className="w-full border border-gray-400 p-2 rounded"
+                    className="w-full rounded border border-gray-400 p-2 focus:border-primary focus:outline-none"
                   />
                   <input
                     type="text"
@@ -241,7 +249,7 @@ export default function Profile() {
                     value={last_name}
                     placeholder={userName.split(' ')[1]}
                     onChange={handleInputChange}
-                    className="w-full border border-gray-400 p-2 rounded"
+                    className="w-full rounded border border-gray-400 p-2 focus:border-primary focus:outline-none"
                   />
                 </div>
                 <div className="mb-4 flex items-center">
@@ -251,7 +259,7 @@ export default function Profile() {
                     value={userName}
                     placeholder="Username"
                     onChange={handleInputChange}
-                    className="w-full border border-gray-400 p-2 rounded"
+                    className="w-full rounded border border-gray-400 p-2  focus:border-primary focus:outline-none"
                   />
                 </div>
                 <div className="mb-4 flex items-center">
@@ -261,18 +269,15 @@ export default function Profile() {
                     value={email}
                     placeholder="Email"
                     onChange={handleInputChange}
-                    className="w-full border border-gray-400 p-2 rounded"
+                    className="w-full rounded border border-gray-400 p-2  focus:border-primary focus:outline-none"
                   />
                 </div>
-                <button
-                  type="submit"
-                  className="w-full bg-blue-500 text-white p-2 rounded"
-                >
+                <button type="submit" className="w-full rounded bg-blue-500 p-2 text-white">
                   Update Profile
                 </button>
                 <button
                   type="button"
-                  className="w-full bg-gray-500 text-white p-2 rounded mt-2"
+                  className="mt-2 w-full rounded bg-gray-500 p-2 text-white"
                   onClick={() => setIsEditing(false)}
                 >
                   Cancel
@@ -280,13 +285,14 @@ export default function Profile() {
               </form>
             ) : (
               <div>
-                <h2 className="text-2xl font-bold mb-4">Profile</h2>
-                <p className="mb-2"><strong>Username:</strong> {userName}</p>
-                <p className="mb-2"><strong>Email:</strong> {email}</p>
-                <button
-                  className="bg-blue-500 text-white p-2 rounded"
-                  onClick={() => setIsEditing(true)}
-                >
+                <h2 className="mb-4 text-2xl font-bold">Profile</h2>
+                <p className="mb-2">
+                  <strong>Username:</strong> {userName}
+                </p>
+                <p className="mb-2">
+                  <strong>Email:</strong> {email}
+                </p>
+                <button className="rounded bg-blue-500 p-2 text-white" onClick={() => setIsEditing(true)}>
                   Edit Profile
                 </button>
               </div>

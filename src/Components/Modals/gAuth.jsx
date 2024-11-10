@@ -1,47 +1,55 @@
-import React from 'react'
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { FcGoogle } from "react-icons/fc";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router';
 import { FaGoogle } from 'react-icons/fa';
 
-
 export default function GAuth() {
+  const navigate = useNavigate();
 
+  const handleSignInWithGoogleProvider = () => {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
 
-  const navigate = useNavigate()
-  const handleSignInWithGoogleProvider = ()=>{
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken; // This is the OAuth access token
+        const user = result.user; // This is the signed-in user
 
-const auth = getAuth();
-const provider = new GoogleAuthProvider();
-signInWithPopup(auth, provider)
-.then((result) => {
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
+        // You can use the token for further API requests if needed
+        console.log('Access Token:', token);
+        console.log('User  Info:', user);
 
-    navigate("/profile");
-     toast.success("Welcome Back");
+        // Navigate to the profile page and show a success message
+        navigate('/profile');
+        toast.success('Welcome Back, ' + user.displayName); // Use user's display name in the toast
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.customData.email; // The email of the user's account used.
+        const credential = GoogleAuthProvider.credentialFromError(error); // The AuthCredential type that was used.
 
-    const user = result.user;
-  
+        // Log the error information for debugging
+        console.error('Error Code:', errorCode);
+        console.error('Error Message:', errorMessage);
+        console.error('Email:', email);
 
-  }).catch((error) => {
-    // Handle Errors here.
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // The email of the user's account used.
-    const email = error.customData.email;
-    // The AuthCredential type that was used.
-    const credential = GoogleAuthProvider.credentialFromError(error);
-    // ...
-  });
+        // Show error message to the user
+        toast.error('Authentication failed: ' + errorMessage);
+      });
+  };
 
-  }
   return (
-<div className='md:flex  items-center'>
-            <p className='font-menu font-semibold text-center my-3'> or signup with</p>
-            <button onClick={handleSignInWithGoogleProvider} className='w-full rounded-full flex justify-center bg-red-500 py-2 text-center px-5 text-base font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-primary dark:focus:ring-blue-800 sm:w-auto'>
-            <FaGoogle className='ml-2 cursor-pointer text-white text-2xl'/>  </button>
-          </div>
-  )
+    <div className="items-center md:flex">
+      <p className="my-3 text-center font-menu font-semibold"> or signup with</p>
+      <button
+        onClick={handleSignInWithGoogleProvider}
+        className="flex w-full justify-center rounded-full bg-red-500 px-5 py-2 text-center text-base font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-primary dark:focus:ring-blue-800"
+      >
+        <FaGoogle className="ml-2 cursor-pointer text-2xl text-white" />
+      </button>
+    </div>
+  );
 }
