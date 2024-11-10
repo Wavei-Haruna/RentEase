@@ -6,7 +6,7 @@ import { getAuth } from 'firebase/auth';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../firebase';
-import districts from '../Components/Districts';
+import districts from '../Components/districts';
 
 const ProgressBar = ({ progress }) => (
   <div className="progress-bar  z-50   my-4  h-4 w-full overflow-hidden rounded-lg bg-gray-200">
