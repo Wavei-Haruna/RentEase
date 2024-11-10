@@ -24,7 +24,6 @@ export default function ForRent() {
             id: doc.id,
             data: doc.data(),
           });
-
         });
         setListingsForRent(listingData);
         setLoading(false);
@@ -37,13 +36,13 @@ export default function ForRent() {
   }, []);
 
   if (loading) return <SkeletonLoader count={6} />; // Use SkeletonLoader while loading
-  
+
   return (
-    <div className='mx-auto max-w-6xl'>
+    <div className="mx-auto max-w-6xl">
       <h1 className="relative mx-auto my-12 w-fit rounded-lg border-l-4 border-r-4 border-secondary px-2 font-header text-xl font-bold text-gray-600">
         Rooms for Rent
       </h1>
-      <ul className='grid md:grid-cols-3 gap-5'>
+      <ul className="grid gap-5 md:grid-cols-3">
         {listingsForRent.map((listing) => (
           <div key={listing.id} onClick={() => navigate(`/listing/${listing.id}`)}>
             <ListingItemForSale listing={listing.data} id={listing.id} />

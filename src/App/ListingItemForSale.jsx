@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import { MdKitchen, MdLocationOn } from 'react-icons/md';
+import { MdKitchen, MdLocationOn, MdWater } from 'react-icons/md';
 import { FaBed, FaBath } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom'; // Assuming you are using react-router-dom for navigation
 
@@ -14,58 +14,50 @@ export default function ListingItemForSale({ listing, id }) {
   };
 
   return (
-    <div className='bg-white rounded-lg shadow-md p-6 space-y-4'>
-      <div className='relative w-full h-64'>
+    <div className="space-y-4 rounded-lg bg-white p-6 shadow-md">
+      <div className="relative h-64 w-full">
         <img
           src={listing.imgUrls[0]}
           alt=""
-          className='w-full h-full transition-all ease-in duration-150 object-cover rounded-lg hover:scale-105 cursor-pointer'
+          className="h-full w-full cursor-pointer rounded-lg object-cover transition-all duration-150 ease-in hover:scale-105"
           onClick={handleClick} // Click handler for navigation
         />
 
-        <div className='absolute top-1 left-2 flex items-center justify-center bg-black p-2 bg-opacity-60 rounded-tl-md rounded-br-md'>
-          <MdLocationOn className='text-white mr-1' size={20} />
-          <p className='text-sm text-white font-semibold capitalize'>{listing.town}</p>
+        <div className="absolute left-2 top-1 flex items-center justify-center rounded-br-md rounded-tl-md bg-black bg-opacity-60 p-2">
+          <MdLocationOn className="mr-1 text-white" size={20} />
+          <p className="text-sm font-semibold capitalize text-white">{listing.town}</p>
         </div>
-        <p className='absolute top-1 right-2 text-xs text-white bg-black p-2 bg-opacity-60 rounded-tl-md rounded-br-md'>
+        <p className="absolute right-2 top-1 rounded-br-md rounded-tl-md bg-black bg-opacity-60 p-2 text-xs text-white">
           {date.fromNow()}
         </p>
 
-        <div className="absolute bottom-1 left-2 text-xs text-white font-semibold bg-black p-2 bg-opacity-60 rounded-tl-md rounded-br-md">
+        <div className="absolute bottom-1 left-2 rounded-br-md rounded-tl-md bg-black bg-opacity-60 p-2 text-xs font-semibold text-white">
           {listing.type === 'sell' ? <p>For Sale : GHs {listing.price}</p> : <p>For Rent : GHs {listing.price}</p>}
         </div>
       </div>
       <div>
-        <div className='flex justify-between items-center'>
-          <p className='text-sm font-bold capitalize'>{listing.name}</p>
-
-          <div className='flex justify-between items-center'>
-            <p className='text-sm flex justify-center items-center font-semibold'>
-              <MdKitchen size={20} className='mr-1 text-primary' />
-              <span className='text-cyan-600 mr-1'>Kitchen: </span> {listing.kitchen ? ' Yes' : ' No'}
-            </p>
-            <p className='text-sm flex justify-center items-center font-semibold'>
-              <FaBath size={18} className='ml-4 mr-1 text-primary' />
-              <span className='text-lime-600 mr-1'>Bathroom: </span> {listing.bathroom ? ' Yes' : ' No'}
-            </p>
+        <div>
+          <p className="font-body text-lg font-semibold capitalize text-primary">{listing.name}</p>
+          <div className="mt-2 flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <p className="flex items-center font-medium text-secondary">
+                <MdKitchen size={18} className="mr-1  text-yellow-600" />
+                Kitchen: {listing.kitchen ? 'Yes' : 'No'}
+              </p>
+              <p className="flex items-center text-secondary ">
+                <MdWater size={18} className="mr-1 text-blue-300" />
+                Bathroom: {listing.bathroom ? 'Yes' : 'No'}
+              </p>
+            </div>
           </div>
-        </div>
-        <div className='flex justify-center space-x-4 my-2'>
-          <p className='text-sm font-semibold flex'>
-            <FaBed size={20} className='mr-1 text-primary' />
-            <span className='text-pink-600'>Bedroom:</span> {listing.bedroom}
-          </p>
-          <p className='text-sm font-bold'>
-            <span className='text-orange-600'>Hall:</span> {listing.hall}
-          </p>
-          <p className='text-sm font-bold'>
-            <span className='text-teal-600'>Toilet:</span> {listing.toilet ? 'Yes' : 'No'}
-          </p>
-          <div className='flex-1'>
-            <p className='text-sm '>
-              <span className='text-indigo-600'></span> {listing.landMark}
+          <div className="mt-4 flex items-center space-x-4 text-secondary">
+            <p className="flex items-center">
+              <FaBed size={18} className="mr-1" />
+              Bedroom: {listing.bedroom}
             </p>
+            <p>Toilet: {listing.toilet ? 'Yes' : 'No'}</p>
           </div>
+          <p className="mt-2 text-gray-600">{listing.description}</p>
         </div>
       </div>
     </div>

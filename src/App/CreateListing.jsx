@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { MyDropzone } from './Dropzone';
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 import { getStorage, ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
@@ -26,6 +25,8 @@ export default function CreateListing() {
     bedroom: 1,
     name: '',
     description: '',
+    numberOfPeople: 1, // New field for number of people
+
     Kitchen: false,
     toilet: false,
     bathroom: false,
@@ -35,6 +36,7 @@ export default function CreateListing() {
     district: '',
     price: 1,
     town: '',
+    priceFrequency: 'Year', // Default to month
     section: '',
     landMark: '',
     location: '', // new location field
@@ -49,6 +51,8 @@ export default function CreateListing() {
     hall,
     images,
     price,
+    numberOfPeople,
+    priceFrequency,
     description,
     toilet,
     region,
@@ -62,7 +66,21 @@ export default function CreateListing() {
   const [progress, setProgress] = useState(0);
 
   const calculateFormProgress = () => {
-    const fields = [type, name, bedroom, hall, description, price, region, district, town, section, landMark];
+    const fields = [
+      type,
+      name,
+      bedroom,
+      numberOfPeople,
+      hall,
+      description,
+      price,
+      priceFrequency,
+      region,
+      district,
+      town,
+      section,
+      landMark,
+    ];
     const filledFields = fields.filter((field) => field !== '' && field !== false);
     const totalFields = fields.length;
     const completion = Math.round((filledFields.length / totalFields) * 100);
@@ -87,8 +105,7 @@ export default function CreateListing() {
         ...prevState,
         images: e.target.files,
       }));
-    }
-    if (!e.target.files) {
+    } else {
       setFormData((prevState) => ({
         ...prevState,
         [e.target.id]: boolean ?? e.target.value,
@@ -198,7 +215,7 @@ export default function CreateListing() {
         <form className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3" onSubmit={onSubmit}>
           <div className="col-span-2 flex flex-col">
             <label className="floating-label font-body font-light">
-              Sell or Rent Or Hostel
+              SelL, Rent Or Hostel
               <select
                 id="type"
                 onChange={onChange}
@@ -207,9 +224,28 @@ export default function CreateListing() {
               >
                 <option value="sell">Sell</option>
                 <option value="rent">Rent</option>
+                <option value="hostel">Hostel</option>
               </select>
             </label>
           </div>
+          {/* Conditionally render the Number of People field */}
+          {type === 'hostel' && (
+            <div className="col-span-2 sm:col-span-1">
+              <label className="floating-label font-body font-light">
+                Number of People in Room
+                <input
+                  type="number"
+                  name="numberOfPeople"
+                  value={formData.numberOfPeople}
+                  onChange={onChange}
+                  id="numberOfPeople"
+                  min={1}
+                  required
+                  className="floating-input transition-all ease-in-out focus:outline-none focus:ring-[1px] focus:ring-primary"
+                />
+              </label>
+            </div>
+          )}
 
           <div className="col-span-2 sm:col-span-1">
             <label className="floating-label font-body font-light">
@@ -234,12 +270,27 @@ export default function CreateListing() {
                 type="number"
                 name="price"
                 value={price}
-                onChange={onChange}
+                onChange={onChange} // Existing handler
                 id="price"
                 placeholder="e.g. 1000 in cedis"
                 required
                 className="floating-input transition-all ease-in-out focus:outline-none focus:ring-[1px] focus:ring-primary"
               />
+            </label>
+          </div>
+
+          <div className="col-span-2 sm:col-span-1">
+            <label className="floating-label font-body font-light">
+              Price Frequency
+              <select
+                id="priceFrequency"
+                onChange={onChange} // Existing handler
+                value={priceFrequency}
+                className="floating-input transition-all ease-in-out focus:outline-none focus:ring-[1px] focus:ring-primary"
+              >
+                <option value="month">Per Month</option>
+                <option value="year">Per Year</option>
+              </select>
             </label>
           </div>
 
@@ -428,10 +479,6 @@ export default function CreateListing() {
               ></textarea>
             </label>
           </div>
-
-          <MyDropzone className="dropzone-class" setVideoURL={setVideoURL} />
-          <h3>Uploaded Video URL:</h3>
-          <p>{videoURL}</p>
 
           <div className="col-span-2">
             <button type="button" onClick={getCurrentLocation} className="rounded-lg bg-blue-600 px-4 py-2 text-white">

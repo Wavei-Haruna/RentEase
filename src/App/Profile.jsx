@@ -99,8 +99,8 @@ export default function Profile() {
   };
 
   const initialState = {
-    showSettings: true,
-    showMyListings: false,
+    showSettings: false,
+    showMyListings: true,
     showNotifications: false,
     showReviews: false,
     showMessages: false,

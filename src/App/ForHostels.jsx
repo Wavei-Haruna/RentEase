@@ -1,59 +1,49 @@
-import React, { useEffect, useState } from 'react';
+// components/ForHostels.js
+import { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
 import ListingItemForSale from './ListingItemForSale';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
-import SkeletonLoader from './SkeletonLoader';
-import Header from '../Components/Header';
-import { ActiveRouteProvider } from '../Components/Helpers/Context';
+import { useNavigate } from 'react-router-dom';
+import SkeletonLoader from './SkeletonLoader'; // Import SkeletonLoader
 
-export default function ForSale() {
-  const [listingsForSale, setListingsForSale] = useState([]);
+export default function ForHostels() {
+  const [hostelListings, setHostelListings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchListings = async () => {
+    const fetchHostelListings = async () => {
       try {
         const docRef = collection(db, 'listings');
-        const q = query(docRef, where('type', '==', 'sell'), orderBy('timeStamp', 'desc'));
+        const q = query(docRef, where('type', '==', 'hostel'), orderBy('timeStamp', 'desc'));
         const querySnap = await getDocs(q);
 
-        const listingData = [];
+        const hostelData = [];
         querySnap?.forEach((doc) => {
-          listingData.push({
+          hostelData.push({
             id: doc.id,
             data: doc.data(),
           });
         });
-        setListingsForSale(listingData);
+        setHostelListings(hostelData);
         setLoading(false);
       } catch (error) {
         console.log(error);
       }
     };
 
-    fetchListings();
+    fetchHostelListings();
   }, []);
 
-  if (loading)
-    return (
-      <div>
-        <SkeletonLoader count={6} />
-      </div>
-    );
+  if (loading) return <SkeletonLoader count={6} />; // Use SkeletonLoader while loading
 
   return (
     <div className="mx-auto max-w-6xl">
-      <ActiveRouteProvider>
-        <Header />
-      </ActiveRouteProvider>
-
       <h1 className="relative mx-auto my-12 w-fit rounded-lg border-l-4 border-r-4 border-secondary px-2 font-header text-xl font-bold text-gray-600">
-        Rooms for Sale
+        Hostels Available
       </h1>
       <ul className="grid gap-5 md:grid-cols-3">
-        {listingsForSale.map((listing) => (
+        {hostelListings.map((listing) => (
           <div key={listing.id} onClick={() => navigate(`/listing/${listing.id}`)}>
             <ListingItemForSale listing={listing.data} id={listing.id} />
           </div>

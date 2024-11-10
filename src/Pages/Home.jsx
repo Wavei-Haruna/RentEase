@@ -7,7 +7,7 @@ import JoinUs from '../Components/Page-Sections/JoinUs';
 import ContactUs from '../Components/Page-Sections/contactUs';
 import Footer from '../Components/Page-Sections/Footer';
 import HowItWorks from '../Components/Page-Sections/HowItWorks';
-import AllHouses from '../App/AllHouses';
+import ListingsFilter from '../App/ListingsFilter';
 
 export default function Home() {
   return (
@@ -15,9 +15,11 @@ export default function Home() {
       <ActiveRouteProvider>
         <Header />
       </ActiveRouteProvider>
+
       <Hero />
-      <div className='relative my-10'>Hello</div>
-      <AllHouses/>
+      <div className="my-12">.</div>
+      <ListingsFilter />
+      {/* <AllHouses /> */}
       <WhyUs />
       <HowItWorks />
       <JoinUs />
