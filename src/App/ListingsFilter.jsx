@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import moment from 'moment';
-import { FaSearch, FaBed } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 import { MdLocationOn, MdKitchen, MdWater } from 'react-icons/md';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { db } from '../firebase';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore'; // Add updateDoc
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { FacebookShareButton, WhatsappShareButton, FacebookIcon, WhatsappIcon } from 'react-share';
+
+// Add updateDoc
 import { FaCediSign } from 'react-icons/fa6';
 import { useNavigate } from 'react-router';
 import { AiFillEye } from 'react-icons/ai';
@@ -20,7 +23,17 @@ export default function ListingsFilter() {
   const [viewCounts, setViewCounts] = useState({}); // State to track view counts
 
   const navigate = useNavigate();
-
+  const copyLink = (id) => {
+    const link = `https://rentease.rentals/listing/${id}`; // Replace with your actual URL
+    navigator.clipboard
+      .writeText(link)
+      .then(() => {
+        alert('Link copied to clipboard!');
+      })
+      .catch((err) => {
+        console.error('Could not copy link: ', err);
+      });
+  };
   const handleClick = async (id) => {
     try {
       const viewedListings = JSON.parse(localStorage.getItem('viewedListings')) || [];
@@ -183,22 +196,44 @@ export default function ListingsFilter() {
                 </div>
                 <div className="mt-2 flex items-center justify-between">
                   <p className="flex items-center font-medium text-secondary">
-                    <MdKitchen size={18} className="mr-1 text-yellow-600" />
+                    <MdKitchen size={18} className="mr-1 text-sm text-yellow-600" />
                     Kitchen: {listing.kitchen ? 'Yes' : 'No'}
                   </p>
-                  <p className="flex items-center text-secondary">
+                  <p className="flex items-center text-secondary ">
                     <MdWater size={18} className="mr-1 text-blue-300" />
                     Bathroom: {listing.bathroom ? 'Yes' : 'No'}
                   </p>
                 </div>
-                <div className="mt-4 flex items-center space-x-4 text-secondary">
-                  <p className="flex items-center">
-                    <FaBed size={18} className="mr-1" />
-                    Bedroom: {listing.bedroom}
-                  </p>
-                  <p>Toilet: {listing.toilet ? 'Yes' : 'No'}</p>
+                <div className="mt-4 flex items-center space-x-4 border-b-[1px] text-sm text-gray-800">
+                  <p className="flex items-center text-xs">Bedroom: {listing.bedroom}</p>
+                  <p className="text-xs">Toilet: {listing.toilet ? 'Yes' : 'No'}</p>
+                  <div className="my-2">
+                    {' '}
+                    <span className=" font-semibold">0599655224 | 0500997536</span>
+                  </div>
                 </div>
                 <p className="mt-4 flex items-center text-sm text-gray-800">{listing.description}</p>
+                <div className="mt-6 flex w-full justify-between gap-2 ">
+                  <button
+                    onClick={() => copyLink(listing.id)}
+                    className="flex items-center justify-center rounded-lg bg-gray-500 p-2 text-white"
+                  >
+                    Copy Link
+                  </button>
+                  <FacebookShareButton url={`https://rentease.rentals/listing/${listing.id}`} quote={listing.name}>
+                    <FacebookIcon size={32} round />
+                  </FacebookShareButton>
+
+                  <WhatsappShareButton url={`https://rentease.rentals/listing/${listing.id}`} title={listing.name}>
+                    <WhatsappIcon size={32} round />
+                  </WhatsappShareButton>
+                  <button
+                    onClick={() => handleClick(listing.id)}
+                    className="mt-2 rounded-lg bg-blue-500 p-2 text-white transition-all duration-200 ease-in-out hover:scale-105"
+                  >
+                    View Details
+                  </button>
+                </div>
               </div>
             </div>
           ))

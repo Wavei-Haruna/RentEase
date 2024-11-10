@@ -82,7 +82,7 @@ const DetailedListing = () => {
   }
 
   return (
-    <div className="detailed-listing container relative mx-auto my-12 rounded-lg bg-white p-6 shadow-lg">
+    <div className="detailed-listing container relative mx-auto my-16 rounded-lg bg-white p-6 shadow-lg">
       <ActiveRouteProvider>
         <Header />
       </ActiveRouteProvider>
