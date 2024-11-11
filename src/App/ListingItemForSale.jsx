@@ -39,7 +39,7 @@ export default function ListingItemForSale({ listing, id, viewCount }) {
         </div>
 
         {/* View Count */}
-        <div className="absolute bottom-1 right-2 flex items-center rounded-br-md rounded-tl-md bg-black bg-opacity-60 p-2 text-xs text-white">
+        <div className="absolute bottom-1 right-2 flex hidden items-center rounded-br-md rounded-tl-md bg-black bg-opacity-60 p-2 text-xs text-white">
           <AiFillEye className="mx-3" /> {viewCount || 0}
         </div>
       </div>

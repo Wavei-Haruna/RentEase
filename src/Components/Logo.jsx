@@ -9,6 +9,7 @@ const Logo = () => {
   return (
     <div>
       <Link
+        to={'/'}
         onClick={(e) => {
           e.preventDefault();
           setIsActive(1);

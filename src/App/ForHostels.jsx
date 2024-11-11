@@ -5,6 +5,8 @@ import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
 import ListingItemForSale from './ListingItemForSale';
 import { useNavigate } from 'react-router-dom';
 import SkeletonLoader from './SkeletonLoader'; // Import SkeletonLoader
+import { ActiveRouteProvider } from '../Components/Helpers/Context';
+import Header from '../Components/Header';
 
 export default function ForHostels() {
   const [hostelListings, setHostelListings] = useState([]);
@@ -39,6 +41,9 @@ export default function ForHostels() {
 
   return (
     <div className="mx-auto max-w-6xl">
+      <ActiveRouteProvider>
+        <Header />
+      </ActiveRouteProvider>
       <h1 className="relative mx-auto my-12 w-fit rounded-lg border-l-4 border-r-4 border-secondary px-2 font-header text-xl font-bold text-gray-600">
         Hostels Available
       </h1>
