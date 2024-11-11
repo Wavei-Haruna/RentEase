@@ -19,7 +19,7 @@ const Logo = () => {
         }}
         className="flex items-center"
       >
-        <img src={LogImg} alt="our logog"  className='h-12'/>
+        <img src={LogImg} alt="our logog" className="h-6" />
         {/* <span className="self-center whitespace-nowrap text-xl font-semibold text-secondary">Sate Consult</span> */}
       </Link>
     </div>
