@@ -4,7 +4,6 @@ import { PiPaperPlane } from 'react-icons/pi';
 import HamburgerMenu from './HamburgerMenu';
 import NavBar from './Navbar';
 import { navContext } from './Helpers/Context';
-import GetStarted from './Modals/GetStarted';
 import { AnimatePresence } from 'framer-motion';
 import SignIn from './Modals/SignIn';
 import Reset from './Modals/Reset';
@@ -80,21 +79,7 @@ export default function Header() {
             </div>
             <NavBar />
           </div>
-          <AnimatePresence>
-            {signUpModal && (
-              <GetStarted
-                onClose={() => setSignUpModal(false)}
-                openSignIn={() => {
-                  setSignInModal(true);
-                  setSignUpModal(false);
-                }}
-                openReset={() => {
-                  setSignUpModal(false);
-                  setResetModal(true);
-                }}
-              />
-            )}
-          </AnimatePresence>
+          
           <AnimatePresence>
             {signInModal && (
               <SignIn
