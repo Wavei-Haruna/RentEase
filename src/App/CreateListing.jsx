@@ -191,6 +191,7 @@ export default function CreateListing() {
       videoURL,
       timeStamp: serverTimestamp(),
       userRef: auth.currentUser.uid,
+      views: 0, // Initialize views to 0
     };
     delete formDataCopy.images;
 

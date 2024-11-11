@@ -2,9 +2,10 @@
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { navContext } from './Helpers/Context';
+import LogImg from '../assets/Images/logo.png';
 
 const Logo = () => {
-  const { setIsActive }= useContext(navContext)
+  const { setIsActive } = useContext(navContext);
   return (
     <div>
       <Link
@@ -18,7 +19,7 @@ const Logo = () => {
         }}
         className="flex items-center"
       >
-        <h1 className='text-3xl color-blue text-primary font-semibold font-header'>Rent<span className='text-secondary'>Ease</span></h1>
+        <img src={LogImg} alt="our logog"  className='h-12'/>
         {/* <span className="self-center whitespace-nowrap text-xl font-semibold text-secondary">Sate Consult</span> */}
       </Link>
     </div>

@@ -5,13 +5,14 @@ import { MdLocationOn, MdKitchen, MdWater } from 'react-icons/md';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { db } from '../firebase';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { FacebookShareButton, WhatsappShareButton, FacebookIcon, WhatsappIcon } from 'react-share';
 
 // Add updateDoc
 import { FaCediSign } from 'react-icons/fa6';
 import { useNavigate } from 'react-router';
-import { AiFillEye } from 'react-icons/ai';
+import { AiFillEye, AiFillPhone } from 'react-icons/ai';
+import { toast } from 'react-toastify';
 
 export default function ListingsFilter() {
   const [listings, setListings] = useState([]);
@@ -28,7 +29,7 @@ export default function ListingsFilter() {
     navigator.clipboard
       .writeText(link)
       .then(() => {
-        alert('Link copied to clipboard!');
+        toast("'Link copied to clipboard!'");
       })
       .catch((err) => {
         console.error('Could not copy link: ', err);
@@ -44,12 +45,16 @@ export default function ListingsFilter() {
 
         const listingRef = doc(db, 'listings', id);
 
+        // Get the current view count from Firestore
+        const listingDoc = await getDoc(listingRef);
+        const currentViews = listingDoc.exists() ? listingDoc.data().views || 0 : 0;
+
         // Update Firestore and local view count state
-        await updateDoc(listingRef, { views: (viewCounts[id] || 0) + 1 });
+        await updateDoc(listingRef, { views: currentViews + 1 });
 
         setViewCounts((prev) => ({
           ...prev,
-          [id]: (prev[id] || 0) + 1,
+          [id]: currentViews + 1, // Update local state optimistically
         }));
       }
 
@@ -180,7 +185,7 @@ export default function ListingsFilter() {
                   {listing.type === 'sell' ? `For Sale: GHs ${listing.price}` : `For Rent: GHs ${listing.price}`} /
                   {listing.priceFrequency}
                 </div>
-                <div className="absolute bottom-1 right-2 flex items-center rounded-br-md rounded-tl-md bg-black bg-opacity-60 p-2 text-xs text-white">
+                <div className="absolute bottom-1 right-2 flex hidden items-center rounded-br-md rounded-tl-md bg-black bg-opacity-60 p-2 text-xs text-white">
                   <AiFillEye className="mx-3" /> {viewCounts[listing.id] || 0}
                 </div>
               </div>
@@ -197,19 +202,19 @@ export default function ListingsFilter() {
                 <div className="mt-2 flex items-center justify-between">
                   <p className="flex items-center font-medium text-secondary">
                     <MdKitchen size={18} className="mr-1 text-sm text-yellow-600" />
-                    Kitchen: {listing.kitchen ? 'Yes' : 'No'}
+                    {listing.kitchen ? 'Kitchen' : 'No Kitchen'}
                   </p>
                   <p className="flex items-center text-secondary ">
                     <MdWater size={18} className="mr-1 text-blue-300" />
-                    Bathroom: {listing.bathroom ? 'Yes' : 'No'}
+                    {listing.bathroom ? 'Bathroom inside' : 'Shared Bathroom'}
                   </p>
                 </div>
-                <div className="mt-4 flex items-center space-x-4 border-b-[1px] text-sm text-gray-800">
-                  <p className="flex items-center text-xs">Bedroom: {listing.bedroom}</p>
-                  <p className="text-xs">Toilet: {listing.toilet ? 'Yes' : 'No'}</p>
-                  <div className="my-2">
+                <div className="mt-4 flex items-center justify-between space-x-4 border-b-[1px] text-sm text-gray-800">
+                  <p className="">{listing.toilet ? 'Toilet Inside' : 'Shared toilet'}</p>
+                  <div className="my-2 flex items-center gap-x-2">
                     {' '}
-                    <span className=" font-semibold">0599655224 | 0500997536</span>
+                    <AiFillPhone />
+                    <span className=" ">0599655224</span>
                   </div>
                 </div>
                 <p className="mt-4 flex items-center text-sm text-gray-800">{listing.description}</p>

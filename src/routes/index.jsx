@@ -6,6 +6,7 @@ import Profile from '../App/Profile';
 import Home from '../Pages/Home';
 import DetailedListing from '../App/DetailedListing';
 import ForHostels from '../App/ForHostels';
+import GetStarted from '../Components/Modals/GetStarted';
 
 export const routes = [
   { path: '/', element: <Home /> },
@@ -18,5 +19,5 @@ export const routes = [
   { path: '/for-rent', element: <ForRent /> },
   { path: '/hostels', element: <ForHostels /> },
   { path: '/listing/:id', element: <DetailedListing /> }, // New route for detailed listing
+  { path: '/register-with-rent-ease', element: <GetStarted /> }, // New route for detailed listing
 ];
-

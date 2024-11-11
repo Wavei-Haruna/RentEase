@@ -4,13 +4,14 @@ import { PiPaperPlane } from 'react-icons/pi';
 import HamburgerMenu from './HamburgerMenu';
 import NavBar from './Navbar';
 import { navContext } from './Helpers/Context';
-import GetStarted from './Modals/getStarted';
+import GetStarted from './Modals/GetStarted';
 import { AnimatePresence } from 'framer-motion';
 import SignIn from './Modals/SignIn';
 import Reset from './Modals/Reset';
 import { useAuthHook } from '../App/Hooks/useAuthHook';
 import { getAuth, signOut } from 'firebase/auth';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function Header() {
   const [signInModal, setSignInModal] = useState(false);
@@ -33,7 +34,7 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      alert('You have been logged out.');
+      toast('You have been logged out.');
       navigate('/'); // Redirect to homepage after logout
     } catch (error) {
       console.error('Logout error:', error);
@@ -66,10 +67,9 @@ export default function Header() {
                 <a
                   data-modal-target="authentication-modal"
                   data-modal-toggle="authentication-modal"
-                  className="mr-2 rounded-lg bg-primary px-4 py-2 font-medium text-white duration-300 hover:scale-105 hover:cursor-pointer hover:bg-secondary focus:outline-none focus:ring-4 lg:px-5 lg:py-2.5"
+                  className="mr-2 hidden rounded-lg bg-primary px-4 py-2 font-medium text-white duration-300 hover:scale-105 hover:cursor-pointer hover:bg-secondary focus:outline-none focus:ring-4 lg:px-5 lg:py-2.5"
                   onClick={(e) => {
-                    e.preventDefault();
-                    setSignUpModal(true);
+                    navigate('/register-with-rent-ease');
                   }}
                 >
                   Get Started

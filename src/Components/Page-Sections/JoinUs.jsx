@@ -3,7 +3,7 @@ import { PiPaperPlane } from 'react-icons/pi';
 import SlideInLeft from '../Animations/SlideInLeft';
 import SlideInRight from '../Animations/SlideInRight';
 import addUser from '../../assets/Images/Animations/addUser.gif';
-import GetStarted from '../Modals/getStarted';
+import GetStarted from '../Modals/GetStarted';
 
 import { AnimatePresence } from 'framer-motion';
 import Reset from '../Modals/Reset';

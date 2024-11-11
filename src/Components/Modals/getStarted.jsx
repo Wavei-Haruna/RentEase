@@ -72,7 +72,7 @@ export default function GetStarted({ onClose, openSignIn, openReset }) {
         <AiOutlineCloseSquare
           size={32}
           className="absolute right-2 top-1 text-primary hover:scale-105 hover:text-other"
-          onClick={onClose}
+          onClick={() => onClose()} // Call the onClose function here
         />
 
         <SlideInRight duration={0.5}>

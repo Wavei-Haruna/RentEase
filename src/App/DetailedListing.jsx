@@ -5,14 +5,15 @@ import 'swiper/swiper-bundle.css';
 import { db } from '../firebase';
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
 import SwiperCore from 'swiper';
-import { doc, getDoc, addDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import { getAuth } from 'firebase/auth';
-import Spinner from './Spinner'; // Assuming you have a Spinner component
+import Spinner from './Spinner';
 import { ActiveRouteProvider } from '../Components/Helpers/Context';
 import Header from '../Components/Header';
-import { MdKitchen, MdWater } from 'react-icons/md';
-import { FaBed } from 'react-icons/fa';
+import { MdKitchen, MdWater, MdLocationOn } from 'react-icons/md';
+import { FaBed, FaShower, FaDollarSign } from 'react-icons/fa';
+import { GiHouseKeys } from 'react-icons/gi';
 
 SwiperCore.use([Navigation, Pagination, Scrollbar, A11y]);
 
@@ -20,8 +21,6 @@ const DetailedListing = () => {
   const { id } = useParams();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
-  // const [message, setMessage] = useState('');
-  // const [messages, setMessages] = useState([]);
   const auth = getAuth();
 
   useEffect(() => {
@@ -40,133 +39,103 @@ const DetailedListing = () => {
     fetchListing();
   }, [id]);
 
-  const fetchMessages = async () => {
-    const messagesRef = collection(db, 'listings', id, 'messages');
-    const messagesSnap = await getDocs(messagesRef);
-    const messagesData = messagesSnap.docs.map((doc) => doc.data());
-    setMessages(messagesData);
-  };
-
-  useEffect(() => {
-    fetchMessages();
-  }, [id]);
-
-  // const handleSendMessage = async () => {
-  //   if (!auth.currentUser) {
-  //     toast.error('You need to be logged in to send a message');
-  //     return;
-  //   }
-
-  //   if (message.trim() === '') {
-  //     toast.error('Message cannot be empty');
-  //     return;
-  //   }
-
-  //   try {
-  //     const messagesRef = collection(db, 'listings', id, 'messages');
-  //     await addDoc(messagesRef, {
-  //       message,
-  //       userId: auth.currentUser.uid,
-  //       createdAt: new Date(),
-  //     });
-  //     setMessage('');
-  //     fetchMessages();
-  //     toast.success('Message sent');
-  //   } catch (error) {
-  //     toast.error('Failed to send message');
-  //   }
-  // };
-
   if (loading) {
     return <Spinner />;
   }
 
   return (
-    <div className="detailed-listing container relative mx-auto my-16 rounded-lg bg-white p-6 shadow-lg">
+    <div className="detailed-listing container mx-auto my-16 max-w-screen-lg rounded-xl bg-white p-6 shadow-lg">
       <ActiveRouteProvider>
         <Header />
       </ActiveRouteProvider>
 
+      {/* Swiper Carousel for Images */}
       <Swiper
         spaceBetween={30}
         slidesPerView={1}
         navigation
         pagination={{ clickable: true }}
-        className="my-8 overflow-hidden rounded-xl"
+        className="my-8 overflow-hidden rounded-lg shadow-lg"
       >
         {listing.imgUrls.map((url, index) => (
           <SwiperSlide key={index}>
-            <img src={url} alt={`Slide ${index}`} className="h-64 w-full object-cover md:h-[60vh]" />
+            <img
+              src={url}
+              alt={`Slide ${index}`}
+              className="h-[60vh] w-full rounded-md object-cover transition-transform duration-300 hover:scale-105"
+            />
           </SwiperSlide>
         ))}
       </Swiper>
 
-      <div className="mt-8 text-gray-700 ">
-        <div>
-          <div>
-            <p className="font-body text-lg font-semibold capitalize text-primary ">{listing.name}</p>
-            <div className="mt-2 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <p className="flex items-center font-medium text-secondary">
-                  <MdKitchen size={18} className="mr-1  text-yellow-600" />
-                  Kitchen: {listing.kitchen ? 'Yes' : 'No'}
-                </p>
-                <p className="flex items-center text-secondary ">
-                  <MdWater size={18} className="mr-1 text-blue-300" />
-                  Bathroom: {listing.bathroom ? 'Yes' : 'No'}
-                </p>
-              </div>
-            </div>
-            <div className="mt-4 flex items-center space-x-4 text-secondary">
-              <p className="flex items-center">
-                <FaBed size={18} className="mr-1" />
-                Bedroom: {listing.bedroom}
-              </p>
-              <p>Toilet: {listing.toilet ? 'Yes' : 'No'}</p>
-            </div>
-            <p className="mt-2 text-gray-600">{listing.description}</p>
+      {/* Listing Details */}
+      <div className="listing-details mt-8 space-y-6 text-gray-700">
+        <h1 className="text-3xl font-semibold capitalize text-primary">{listing.name}</h1>
+
+        {/* Property Overview */}
+        <div className="flex flex-wrap items-center justify-between gap-4 text-lg text-secondary">
+          <div className="flex items-center space-x-2">
+            <FaDollarSign size={20} className="text-green-500" />
+            <span className="font-semibold">{listing.price} GHS</span>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <MdLocationOn size={20} className="text-red-500" />
+            <span>{listing.region}</span>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <GiHouseKeys size={20} className="text-blue-500" />
+            <span>{listing.propertyType}</span>
           </div>
         </div>
 
-        <div className="map my-6 ">
+        {/* Detailed Features */}
+        <div className="flex flex-wrap items-center justify-between gap-4 text-lg text-secondary">
+          <div className="flex items-center space-x-2">
+            <FaBed size={20} className="text-gray-700" />
+            <span>
+              {listing.bedroom} Bedroom{listing.bedroom > 1 ? 's' : ''}
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <FaShower size={20} className="text-blue-300" />
+            <span>{listing.bathroom ? 'Bathroom' : 'No Bathroom'}</span>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <MdKitchen size={20} className="text-yellow-600" />
+            <span>{listing.kitchen ? 'Kitchen Available' : 'No Kitchen'}</span>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <MdWater size={20} className="text-teal-400" />
+            <span>{listing.toilet ? 'Toilet Available' : 'No Toilet'}</span>
+          </div>
+        </div>
+
+        {/* Listing Description */}
+        <div className="mt-6">
+          <p className="text-lg text-gray-600">{listing.description}</p>
+        </div>
+
+        {/* Location Button */}
+        <div className="mt-6">
           <button
             onClick={() => window.open(listing.location, '_blank')}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+            className="w-full rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition duration-200 hover:bg-blue-700"
           >
             View Location
           </button>
         </div>
-        <div className="my-2">
-          {' '}
-          call us on <span className="font-semibold">0599655224 | 0500997536</span>
-        </div>
-        {/* 
-        <div className="messages mb-6">
-          <h2 className="mb-4 text-2xl font-semibold">Messages</h2>
-          <div className="space-y-4">
-            {messages.map((msg, index) => (
-              <div key={index} className="rounded-lg bg-gray-100 p-4 shadow">
-                <p className="text-gray-800">{msg.message}</p>
-              </div>
-            ))}
-          </div>
-        </div> */}
 
-        {/* <div className="message-input">
-          <textarea
-            className="w-full rounded-lg border p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Type your message here..."
-            rows="4"
-          />
-          <button
-            className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
-            onClick={handleSendMessage}
-          >
-            Send Message
-          </button>
-        </div> */}
+        {/* Contact Information */}
+        <div className="mt-6 text-lg">
+          <p>
+            Contact us at <span className="font-semibold text-primary">0599655224 | 0500997536</span>
+          </p>
+        </div>
       </div>
     </div>
   );
