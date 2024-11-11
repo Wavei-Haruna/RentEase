@@ -1,4 +1,3 @@
-import AllHouses from '../App/AllHouses';
 import ForRent from '../App/ForRent';
 import ForSale from '../App/ForSale';
 import PrivateRoute from '../App/PrivateRoute';
@@ -6,7 +5,7 @@ import Profile from '../App/Profile';
 import Home from '../Pages/Home';
 import DetailedListing from '../App/DetailedListing';
 import ForHostels from '../App/ForHostels';
-import GetStarted from '../Components/Modals/GetStarted';
+import GetStarted from '../Components/Modals/getStarted';
 
 export const routes = [
   { path: '/', element: <Home /> },
